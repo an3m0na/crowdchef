@@ -16,7 +16,7 @@ public class CrowdChefDatabase {
     private Session session;
 
     @NotNull
-    private Transaction transaction;
+    private Transaction transaction; //bla
 
     public <T> void save(@NotNull T aToBeSaved, Class<T> aClass)
     {
