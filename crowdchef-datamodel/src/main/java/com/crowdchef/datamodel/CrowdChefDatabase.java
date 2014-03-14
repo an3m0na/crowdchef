@@ -20,7 +20,7 @@ public class CrowdChefDatabase {
 
     public <T> void save(@NotNull T aToBeSaved, Class<T> aClass)
     {
-        session = new DatabaseUtil().getSession();
+        session = DatabaseUtil.getSession();
         transaction = session.beginTransaction();
         session.save(aToBeSaved);
         transaction.commit();
@@ -30,7 +30,7 @@ public class CrowdChefDatabase {
     public <T> void persist(@NotNull T aToBeSaved,
                             Class<T> aClass)
     {
-        session = new DatabaseUtil().getSession();
+        session = DatabaseUtil.getSession();
         transaction = session.beginTransaction();
         session.persist(aToBeSaved);
         transaction.commit();
@@ -43,7 +43,7 @@ public class CrowdChefDatabase {
             Map<String, String> parameters,
             Class<T> aClass)
     {
-        session = new DatabaseUtil().getSession();
+        session = DatabaseUtil.getSession();
         transaction = session.beginTransaction();
         Query myQuery = session.getNamedQuery(queryName);
         for (String parameter : parameters.keySet())
@@ -59,7 +59,7 @@ public class CrowdChefDatabase {
     public <T> List<T> retrieve(String queryName,
                                 Class<T> aClass)
     {
-        session = new DatabaseUtil().getSession();
+        session = DatabaseUtil.getSession();
         transaction = session.beginTransaction();
         Query myQuery = session.getNamedQuery(queryName);
         List<T> recordSet = myQuery.list();
@@ -73,7 +73,7 @@ public class CrowdChefDatabase {
                                 String value,
                                 Class<T> aClass)
     {
-        session = new DatabaseUtil().getSession();
+        session = DatabaseUtil.getSession();
         transaction = session.beginTransaction();
         Query myQuery = session.getNamedQuery(queryName);
         myQuery.setString(parameter, value);
@@ -87,7 +87,7 @@ public class CrowdChefDatabase {
     public <T> void saveOrUpdate(@NotNull T aToBeSaved,
                                  Class<T> aClass)
     {
-        session = new DatabaseUtil().getSession();
+        session = DatabaseUtil.getSession();
         transaction = session.beginTransaction();
         session.saveOrUpdate(aToBeSaved);
         transaction.commit();
@@ -97,7 +97,7 @@ public class CrowdChefDatabase {
     public <T> void saveOrUpdate(@NotNull Collection<T> aToBeSaved,
                                  Class<T> aClass)
     {
-        session = new DatabaseUtil().getSession();
+        session = DatabaseUtil.getSession();
         transaction = session.beginTransaction();
         session.saveOrUpdate(aToBeSaved);
         transaction.commit();
@@ -107,7 +107,7 @@ public class CrowdChefDatabase {
     public <T> void delete(@NotNull T aToBeSaved,
                            Class<T> aClass)
     {
-        session = new DatabaseUtil().getSession();
+        session = DatabaseUtil.getSession();
         transaction = session.beginTransaction();
         session.delete(aToBeSaved);
         transaction.commit();
@@ -117,7 +117,7 @@ public class CrowdChefDatabase {
     public <T> void delete(@NotNull List<T> aToBeDeleted,
                            Class<T> aClass)
     {
-        session = new DatabaseUtil().getSession();
+        session = DatabaseUtil.getSession();
         transaction = session.beginTransaction();
 
         for(T myObjectToBeDeleted : aToBeDeleted)
