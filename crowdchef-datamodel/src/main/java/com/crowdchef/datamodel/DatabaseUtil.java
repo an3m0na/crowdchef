@@ -6,13 +6,12 @@ import org.hibernate.service.*;
 
 public class DatabaseUtil {
     private static final SessionFactory sessionFactory;
-
+    private static final String HYBERNATE_CONFIG = "database_config.xml";
     static
     {
         try
         {
-
-            Configuration myConfiguration = new Configuration().configure();
+            Configuration myConfiguration = new Configuration().configure(HYBERNATE_CONFIG);
             ServiceRegistry myServiceRegistry = new ServiceRegistryBuilder().applySettings(myConfiguration.getProperties())
                     .buildServiceRegistry();
             sessionFactory = myConfiguration.buildSessionFactory(myServiceRegistry);
