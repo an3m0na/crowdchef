@@ -1,6 +1,7 @@
 package com.crowdchef.core.handlers;
 
-import com.crowdchef.core.DatabaseController;
+import com.crowdchef.core.CoreController;
+import com.crowdchef.datamodel.CrowdChefDatabase;
 import com.crowdchef.datamodel.ValidationException;
 import com.crowdchef.datamodel.daos.UserDAO;
 import com.crowdchef.datamodel.entities.User;
@@ -9,8 +10,8 @@ import com.crowdchef.datamodel.entities.UserInfo;
 public class UserHandler {
     private UserDAO userDao;
 
-    public UserHandler(DatabaseController databaseController) throws ValidationException {
-        this.userDao = new UserDAO(databaseController.getDatabase());
+    public UserHandler(CrowdChefDatabase database) throws ValidationException {
+        this.userDao = new UserDAO(database);
     }
 
     public Long registerUser(String username, String password) {

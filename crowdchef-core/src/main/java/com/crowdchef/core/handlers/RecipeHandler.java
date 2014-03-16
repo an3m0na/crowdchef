@@ -1,7 +1,8 @@
 package com.crowdchef.core.handlers;
 
 
-import com.crowdchef.core.DatabaseController;
+import com.crowdchef.core.CoreController;
+import com.crowdchef.datamodel.CrowdChefDatabase;
 import com.crowdchef.datamodel.daos.RecipeDAO;
 import com.crowdchef.datamodel.entities.Recipe;
 
@@ -10,8 +11,8 @@ import java.util.List;
 public class RecipeHandler {
     private RecipeDAO recipeDao;
 
-    public RecipeHandler(DatabaseController databaseController) {
-        this.recipeDao = new RecipeDAO(databaseController.getDatabase());
+    public RecipeHandler(CrowdChefDatabase database) {
+        this.recipeDao = new RecipeDAO(database);
 
     }
 
@@ -27,7 +28,11 @@ public class RecipeHandler {
         return recipeDao.getRecipe(id);
     }
 
-    public List<Recipe> getRecipesMatching(String name) {
-        return recipeDao.getRecipesMatching(name);
+    public List<Recipe> getRecipes() {
+        return recipeDao.getRecipesByName("%");
+    }
+
+    public List<Recipe> getRecipesByName(String name) {
+        return recipeDao.getRecipesByName(name);
     }
 }

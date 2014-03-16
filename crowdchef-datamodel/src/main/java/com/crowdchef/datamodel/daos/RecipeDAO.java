@@ -39,7 +39,7 @@ public class RecipeDAO {
         return result.get(0);
     }
 
-    public List<Recipe> getRecipesMatching(String name) {
+    public List<Recipe> getRecipesByName(String name) {
         List<Recipe> result = database.retrieve("AllRecipesLikeName", "name", name, Recipe.class);
         return result;
     }
