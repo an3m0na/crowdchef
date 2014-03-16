@@ -1,5 +1,6 @@
-package com.crowdchef.core;
+package com.crowdchef.core.handlers;
 
+import com.crowdchef.core.DatabaseController;
 import com.crowdchef.datamodel.ValidationException;
 import com.crowdchef.datamodel.daos.UserDAO;
 import com.crowdchef.datamodel.entities.User;

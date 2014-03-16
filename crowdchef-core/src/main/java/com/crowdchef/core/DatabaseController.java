@@ -1,6 +1,8 @@
 package com.crowdchef.core;
 
 
+import com.crowdchef.core.handlers.RecipeHandler;
+import com.crowdchef.core.handlers.UserHandler;
 import com.crowdchef.datamodel.CrowdChefDatabase;
 
 public class DatabaseController {

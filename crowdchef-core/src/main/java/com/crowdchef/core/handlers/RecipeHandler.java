@@ -1,6 +1,7 @@
-package com.crowdchef.core;
+package com.crowdchef.core.handlers;
 
 
+import com.crowdchef.core.DatabaseController;
 import com.crowdchef.datamodel.daos.RecipeDAO;
 import com.crowdchef.datamodel.entities.Recipe;
 
