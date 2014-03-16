@@ -1,12 +1,20 @@
 package com.crowdchef.webservice;
 
-import org.eclipse.jetty.http.HttpStatus;
+import com.crowdchef.*;
 import spark.*;
 
 import static spark.Spark.get;
-import static spark.Spark.post;
 
 public class WebService {
+    private final Searcher theSearcher;
+    private final Indexer theIndexer;
+
+    public WebService(final Searcher aSearcher, final Indexer aIndexer)
+    {
+        theSearcher = aSearcher;
+        theIndexer = aIndexer;
+    }
+
     public void start()
     {
         get(new Route("/")
@@ -18,24 +26,15 @@ public class WebService {
             }
         });
 
-        get(new Route("/ane/puiumeu")
+        get(new Route("/search/:searchQuery/:field")
         {
             @Override
             public Object handle(final Request request, final Response response)
             {
-                request.params("chilotei");
-                return "Pasarica    "+request.queryParams("chilotei");
-            }
-        });
 
-
-        post(new Route("/ane/post") {
-            @Override
-            public Object handle(final Request request, final Response response) {
-                request.body();
-                System.out.println(request.body());
-                request.params("chilotei");
-                return HttpStatus.ACCEPTED_202;
+                theSearcher.search(request.params("searchQuery"),
+                                   request.params("field"));
+                return "CrowdChefServer is On!";
             }
         });
 
