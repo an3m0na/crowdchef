@@ -4,7 +4,7 @@
     <session-factory>
         <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
         <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
-        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/crowdchef_test</property>
+        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/crowdchef</property>
         <property name="hibernate.connection.username">crowd</property>
         <property name="hibernate.connection.password">123</property>
         <property name="current_session_context_class">thread</property>
@@ -12,6 +12,8 @@
         <property name="hbm2ddl.auto">validate</property>
 
         <mapping class="com.crowdchef.datamodel.entities.Recipe"/>
+        <mapping class="com.crowdchef.datamodel.entities.User"/>
+        <mapping class="com.crowdchef.datamodel.entities.UserInfo"/>
 
     </session-factory>
 </hibernate-configuration>
