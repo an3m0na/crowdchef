@@ -1,4 +1,4 @@
-package com.crowdchef;
+package com.crowdchef.core.retriever;
 
 import org.apache.lucene.analysis.*;
 import org.apache.lucene.analysis.standard.*;
