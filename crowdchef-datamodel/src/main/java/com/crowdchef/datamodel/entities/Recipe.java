@@ -1,5 +1,6 @@
 package com.crowdchef.datamodel.entities;
 
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
@@ -26,7 +27,6 @@ import java.util.Date;
 public class Recipe implements Serializable {
     @Id
     @GeneratedValue
-    @Column(name = "idrecipe")
     private Long id;
 
     private String name;
@@ -43,18 +43,21 @@ public class Recipe implements Serializable {
 
     private String directions;
 
-    @Column(name = "create_date", columnDefinition = "datetime", insertable = false)
+    @Column(name = "create_time", columnDefinition = "datetime", insertable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    private Date createDate;
+    private Date createTime;
 
-    @Column(name = "create_user")
-    private Long createUser;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User createUser;
+
 
     private Recipe() {
     }
 
-    public Recipe(String name) {
+    public Recipe(String name, User createUser) {
         this.name = name;
+        this.createUser = createUser;
     }
 
     public Long getId() {
@@ -113,24 +116,25 @@ public class Recipe implements Serializable {
         this.directions = directions;
     }
 
-    public Date getCreateDate() {
-        return createDate;
+    public Date getCreateTime() {
+        return createTime;
     }
 
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 
-    public Long getCreateUser() {
+    public User getCreateUser() {
         return createUser;
     }
 
-    public void setCreateUser(Long createUser) {
+    public void setCreateUser(User createUser) {
         this.createUser = createUser;
     }
 
+
     @Override
     public String toString() {
-        return "Recipe{" + getId() + " added "+getCreateDate()+" by "+getCreateUser()+"} = " + getName() +" ("+getDescription()+"): "+ getDirections();
+        return "Recipe{" + getId() + " added " + getCreateTime() + " by "+ getCreateUser().getUsername() + "} = " + getName() + " (" + getDescription() + "): " + getDirections();
     }
 }
