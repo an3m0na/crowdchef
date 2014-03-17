@@ -1,6 +1,5 @@
 package com.crowdchef.core.handlers;
 
-import com.crowdchef.core.CoreController;
 import com.crowdchef.datamodel.CrowdChefDatabase;
 import com.crowdchef.datamodel.ValidationException;
 import com.crowdchef.datamodel.daos.UserDAO;
@@ -14,22 +13,24 @@ public class UserHandler {
         this.userDao = new UserDAO(database);
     }
 
-    public Long registerUser(String username, String password) {
-        return userDao.updateUser(null, username, password);
+    public User registerUser(String username, String password) {
+        return userDao.updateUser((Long) null, username, password);
     }
 
-    public Long checkUser(String username, String password) {
+    public User checkUser(String username, String password) {
         User user;
         try {
             user = userDao.getUser(username);
         } catch (ValidationException e) {
             return null;
         }
-        return user.getId();
+        if (!user.getPassword().equals(password))
+            return null;
+        return user;
     }
 
-    public void updateUser(Long id, String username, String password) throws ValidationException {
-        userDao.updateUser(id, username, password);
+    public User updateUser(Long id, String username, String password) throws ValidationException {
+        return userDao.updateUser(id, username, password);
     }
 
     public User getUser(Long id) throws ValidationException {
@@ -37,14 +38,14 @@ public class UserHandler {
     }
 
     public UserInfo getUserInfo(Long id) throws ValidationException {
-        UserInfo userInfo = userDao.getUserInfo(id);
-        if (userInfo == null) {
-            userInfo = new UserInfo();
-        }
-        return userInfo;
+        return userDao.getUserInfo(id);
     }
 
-    public void updateUserInfo(Long id, String email, String address, String city, String country) throws ValidationException {
-        userDao.updateUserInfo(id, email, address, city, country);
+    public User updateUserInfo(Long id, String email, String address, String city, String country) throws ValidationException {
+        return userDao.updateUserInfo(id, email, address, city, country);
+    }
+
+    public void deleteUser(Long id) {
+        userDao.deleteUser(id);
     }
 }

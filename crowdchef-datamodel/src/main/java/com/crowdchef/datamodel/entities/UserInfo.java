@@ -29,9 +29,8 @@ public class UserInfo implements Serializable {
 
     }
 
-    public UserInfo(User user, String email) {
+    public UserInfo(User user) {
         this.user = user;
-        this.email = email;
     }
 
     public UserInfo(User user, String email, String address, String city, String country) {

@@ -83,6 +83,10 @@ public class RecipeDAO {
         return result.get(0);
     }
 
+    public List<Recipe> getAllRecipes() {
+        return getRecipesByIds(null);
+    }
+
     public List<Recipe> getRecipesByIds(List<Long> ids) {
         List<Recipe> result;
         if (ids == null) {
