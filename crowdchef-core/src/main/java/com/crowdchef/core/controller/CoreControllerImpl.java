@@ -12,7 +12,7 @@ import com.google.gson.*;
 import java.util.Arrays;
 import java.util.List;
 
-public class CoreControllerImpl implements CoreController {
+class CoreControllerImpl implements CoreController {
     private CrowdChefDatabase database;
     private UserHandler userHandler;
     private RecipeHandler recipeHandler;
