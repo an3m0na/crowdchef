@@ -53,17 +53,19 @@ DROP TABLE IF EXISTS `crowdchef`.`ingredient` ;
 
 CREATE TABLE IF NOT EXISTS `crowdchef`.`ingredient` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
-  `Recipe_id` BIGINT NOT NULL,
+  `recipe_id` BIGINT NOT NULL,
   `name` VARCHAR(100) NULL,
   `description` VARCHAR(255) NULL,
   `quantity` VARCHAR(45) NULL,
+  `ord` INT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_Ingredient_Recipe1_idx` (`Recipe_id` ASC),
-  CONSTRAINT `fk_Ingredient_Recipe1`
-    FOREIGN KEY (`Recipe_id`)
+  INDEX `fk_ingredient_recipe1_idx` (`recipe_id` ASC),
+  UNIQUE INDEX `name_UNIQUE` (`name` ASC),
+  CONSTRAINT `fk_ingredient_recipe1`
+    FOREIGN KEY (`recipe_id`)
     REFERENCES `crowdchef`.`recipe` (`id`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
@@ -128,6 +130,7 @@ CREATE TABLE IF NOT EXISTS `crowdchef`.`taste_category` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `type` VARCHAR(1) NULL,
   `name` VARCHAR(45) NULL,
+  `ord` INT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
@@ -284,6 +287,7 @@ CREATE TABLE IF NOT EXISTS `crowdchef`.`wine` (
   PRIMARY KEY (`id`),
   INDEX `fk_wine_recipe1_idx` (`recipe_id` ASC),
   INDEX `fk_wine_user1_idx` (`user_id` ASC),
+  UNIQUE INDEX `name_UNIQUE` (`name` ASC),
   CONSTRAINT `fk_wine_recipe1`
     FOREIGN KEY (`recipe_id`)
     REFERENCES `crowdchef`.`recipe` (`id`)

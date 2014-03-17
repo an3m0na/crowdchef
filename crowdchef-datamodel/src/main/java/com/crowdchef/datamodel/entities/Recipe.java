@@ -4,6 +4,7 @@ package com.crowdchef.datamodel.entities;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @NamedNativeQueries({
         @NamedNativeQuery(
@@ -19,6 +20,11 @@ import java.util.Date;
         @NamedNativeQuery(
                 name = "AllRecipes",
                 query = "SELECT * FROM recipe",
+                resultClass = Recipe.class
+        ),
+        @NamedNativeQuery(
+                name = "AllRecipesInIds",
+                query = "SELECT * FROM recipe WHERE id in (:ids)",
                 resultClass = Recipe.class
         )
 })
@@ -43,7 +49,7 @@ public class Recipe implements Serializable {
 
     private String directions;
 
-    @Column(name = "create_time", columnDefinition = "datetime", insertable = false)
+    @Column(name = "create_time", columnDefinition = "datetime", insertable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createTime;
 
@@ -51,8 +57,12 @@ public class Recipe implements Serializable {
     @JoinColumn(name = "user_id")
     private User createUser;
 
+    @OneToMany(mappedBy = "recipe", fetch = FetchType.EAGER)
+    @OrderBy("ord asc")
+    private List<Ingredient> ingredients;
 
-    private Recipe() {
+
+    public Recipe() {
     }
 
     public Recipe(String name, User createUser) {
@@ -132,9 +142,16 @@ public class Recipe implements Serializable {
         this.createUser = createUser;
     }
 
+    public List<Ingredient> getIngredients() {
+        return ingredients;
+    }
+
+    public void setIngredients(List<Ingredient> ingredients) {
+        this.ingredients = ingredients;
+    }
 
     @Override
     public String toString() {
-        return "Recipe{" + getId() + " added " + getCreateTime() + " by "+ getCreateUser().getUsername() + "} = " + getName() + " (" + getDescription() + "): " + getDirections();
+        return "Recipe{" + getId() + " added " + getCreateTime() + " by " + getCreateUser().getUsername() + "} = " + getName() + " (" + getDescription() + "): " + getDirections() + "\n\tIngredients: " + getIngredients().toString();
     }
 }

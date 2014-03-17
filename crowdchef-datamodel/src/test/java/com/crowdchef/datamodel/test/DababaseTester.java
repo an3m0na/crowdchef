@@ -1,35 +1,36 @@
 package com.crowdchef.datamodel.test;
 
 import com.crowdchef.datamodel.CrowdChefDatabase;
-import com.crowdchef.datamodel.DatabaseUtil;
+import com.crowdchef.datamodel.daos.RecipeDAO;
+import com.crowdchef.datamodel.daos.UserDAO;
 import com.crowdchef.datamodel.entities.Recipe;
 import com.crowdchef.datamodel.entities.User;
-import com.crowdchef.datamodel.entities.UserInfo;
-import org.hibernate.criterion.Restrictions;
 
-import javax.xml.transform.Result;
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class DababaseTester {
 
-    public static void populateDatabase(CrowdChefDatabase database){
-        User newUser = new User("john", "john");
-        UserInfo newUserInfo= new UserInfo(newUser, "john@gmail.com");
-        newUserInfo.setAddress("Some Street 124");
-        newUserInfo.setCity("Delft");
-        newUserInfo.setCountry("Netherlands");
-        database.save(newUser, User.class);
-        database.save(newUserInfo, UserInfo.class);
+    public static void repopulateDatabase(CrowdChefDatabase database) {
 
-        Recipe newRecipe = new Recipe("Perfect recipe", newUser);
-        newRecipe.setDescription("Awesome recipe for a recipe");
-        newRecipe.setDirections("Stir recipe until becomes recipe");
-        newRecipe.setTags("perfect,inception");
-        database.save(newRecipe, Recipe.class);
+        RecipeDAO recipeDAO = new RecipeDAO(database);
+        UserDAO userDAO = new UserDAO(database);
+
+        recipeDAO.deleteAllRecipes();
+        userDAO.deleteAllUsers();
+
+        User user = userDAO.updateUser((Long)null, "john", "john");
+        userDAO.updateUserInfo(user, "john@gmail.com", "Some Street 124", "Delft", "Netherlands");
+        //userDAO.updateUser(user, "john", "johnson");
+        userDAO.updateUserInfo(user.getId(), "john@gmail.com", "Some Street 124", "Rotterdam", "Netherlands");
+
+        Recipe recipe = recipeDAO.updateRecipe(null, "Perfect recipe", "Awesome recipe for a recipe", "Stir recipe until becomes recipe", "perfect,inception", null, user);
+        recipeDAO.addIngredient(recipe, "tomato sauce", "spicy tomato sauce is best", "200 mL", 2);
+        recipeDAO.addIngredient(recipe, "chicken breast", null, "400 g", 1);
     }
 
-    public  static void main (String[] args){
+    public static void main(String[] args) {
         CrowdChefDatabase database = new CrowdChefDatabase();
 
 
@@ -44,9 +45,10 @@ public class DababaseTester {
 //        }
 //        System.out.println(recipe.getId());
 
-        populateDatabase(database);
+        repopulateDatabase(database);
 
-        List<Recipe> recipes = database.retrieve("AllRecipes", Recipe.class);
+        List<Long> ids = new ArrayList<Long>();
+        List<Recipe> recipes = new RecipeDAO(database).getRecipesByIds(null);
         System.out.println(recipes);
     }
 }

@@ -14,6 +14,7 @@
         <mapping class="com.crowdchef.datamodel.entities.Recipe"/>
         <mapping class="com.crowdchef.datamodel.entities.User"/>
         <mapping class="com.crowdchef.datamodel.entities.UserInfo"/>
+        <mapping class="com.crowdchef.datamodel.entities.Ingredient"/>
 
     </session-factory>
 </hibernate-configuration>

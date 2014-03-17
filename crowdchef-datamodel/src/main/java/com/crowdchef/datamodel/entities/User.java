@@ -32,7 +32,7 @@ public class User implements Serializable {
 
     private String password;
 
-    @Column(name = "create_time", columnDefinition = "datetime", insertable = false)
+    @Column(name = "create_time", columnDefinition = "datetime", insertable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createTime;
 

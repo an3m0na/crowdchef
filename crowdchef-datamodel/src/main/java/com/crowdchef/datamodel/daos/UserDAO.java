@@ -15,17 +15,40 @@ public class UserDAO {
         this.database = database;
     }
 
-    public Long updateUser(Long id, String username, String password) throws ValidationException {
+    public User updateUser(User user, String username, String password) throws ValidationException {
+        if (user == null) {
+            user = new User(username, password);
+        }
+        user.setUsername(username);
+        user.setPassword(password);
+        database.saveOrUpdate(user, User.class);
+        return user;
+    }
+
+    public User updateUser(Long id, String username, String password) throws ValidationException {
         User user;
         if (id == null) {
             user = new User(username, password);
         } else {
             user = getUser(id);
         }
-        user.setUsername(username);
-        user.setPassword(password);
-        database.saveOrUpdate(user, User.class);
-        return user.getId();
+        updateUser(user, username, password);
+        return user;
+    }
+
+    public void deleteUser(Long id) throws ValidationException {
+        User user = getUser(id);
+        database.delete(user, User.class);
+    }
+
+    public void deleteAllUsers() throws ValidationException {
+        List<User> users = getAllUsers();
+        database.delete(users, User.class);
+    }
+
+    public List<User> getAllUsers() throws ValidationException {
+        List<User> result = database.retrieve("AllUsers", User.class);
+        return result;
     }
 
     public User getUser(Long id) throws ValidationException {
@@ -46,21 +69,29 @@ public class UserDAO {
         return result.get(0);
     }
 
-    public UserInfo getUserInfo(Long id) throws ValidationException{
+    public UserInfo getUserInfo(Long id) throws ValidationException {
         User user = getUser(id);
         return user.getUserInfo();
     }
 
-    public void updateUserInfo(Long id, String email, String address, String city, String country) throws ValidationException{
-        User user = getUser(id);
-        UserInfo userInfo = null;
-        if (user.getUserInfo() == null) {
-            userInfo = new UserInfo(user, email);
+    public User updateUserInfo(User user, String email, String address, String city, String country) throws ValidationException {
+        UserInfo userInfo = user.getUserInfo();
+        if (userInfo == null) {
+            userInfo = new UserInfo(user, email, address, city, country);
+            user.setUserInfo(userInfo);
+        } else {
+            userInfo.setEmail(email);
+            userInfo.setAddress(address);
+            userInfo.setCity(city);
+            userInfo.setCountry(country);
         }
-        userInfo.setEmail(email);
-        userInfo.setAddress(address);
-        userInfo.setCity(city);
-        userInfo.setCountry(country);
         database.saveOrUpdate(userInfo, UserInfo.class);
+        return user;
+    }
+
+    public User updateUserInfo(Long id, String email, String address, String city, String country) throws ValidationException {
+        User user = getUser(id);
+        updateUserInfo(user, email, address, city, country);
+        return user;
     }
 }
