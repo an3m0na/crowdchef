@@ -25,13 +25,20 @@ public class UserInfo implements Serializable {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public UserInfo(){
+    public UserInfo() {
 
     }
 
-    public UserInfo(User user, String email){
+    public UserInfo(User user) {
+        this.user = user;
+    }
+
+    public UserInfo(User user, String email, String address, String city, String country) {
         this.user = user;
         this.email = email;
+        this.address = address;
+        this.city = city;
+        this.country = country;
     }
 
     public Long getId() {
@@ -82,4 +89,8 @@ public class UserInfo implements Serializable {
         this.user = user;
     }
 
+    @Override
+    public String toString() {
+        return "UserInfo{" + getId() + "}: " + getEmail() + " " + getAddress() + " " + getCity() + " " + getCountry();
+    }
 }
