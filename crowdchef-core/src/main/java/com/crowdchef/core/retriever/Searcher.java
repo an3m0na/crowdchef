@@ -28,11 +28,6 @@ public class Searcher {
             IndexSearcher searcher = new IndexSearcher(reader);
             Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_44);
             BufferedReader in = null;
-            if (aSearchQuery != null) {
-                in = new BufferedReader(new InputStreamReader(new FileInputStream(aSearchQuery), "UTF-8"));
-            } else {
-                in = new BufferedReader(new InputStreamReader(System.in, "UTF-8"));
-            }
 
             QueryParser parser = new QueryParser(Version.LUCENE_44,
                     aField,

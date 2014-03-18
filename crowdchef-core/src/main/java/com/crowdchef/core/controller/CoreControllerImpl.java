@@ -7,6 +7,7 @@ import com.crowdchef.core.retriever.Indexer;
 import com.crowdchef.core.retriever.Searcher;
 import com.crowdchef.datamodel.CrowdChefDatabase;
 import com.crowdchef.datamodel.entities.Recipe;
+import com.crowdchef.datamodel.entities.User;
 import com.google.gson.*;
 
 import java.util.Arrays;
@@ -92,7 +93,8 @@ class CoreControllerImpl implements CoreController {
 
     @Override
     public Long checkUser(String username, String password) {
-        return userHandler.checkUser(username, password).getId();
+        User user = userHandler.checkUser(username, password);
+        return user == null ? -1 : user.getId();
     }
 
     @Override

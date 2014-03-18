@@ -61,7 +61,7 @@ public class UserDAO {
     }
 
     public User getUser(String username) throws ValidationException {
-        List<User> result = database.retrieve("OneUserByUsername", "name", username, User.class);
+        List<User> result = database.retrieve("OneUserByUsername", "username", username, User.class);
         if (result.size() < 1)
             throw new ValidationException(ValidationErrorCode.ID_NOT_EXIST);
         else if (result.size() > 1)

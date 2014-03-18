@@ -432,7 +432,7 @@ DROP TABLE IF EXISTS `crowdchef`.`user_info` ;
 CREATE TABLE IF NOT EXISTS `crowdchef`.`user_info` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `user_id` BIGINT NOT NULL,
-  `email` VARCHAR(255) NOT NULL,
+  `email` VARCHAR(255) NULL,
   `address` VARCHAR(255) NULL,
   `city` VARCHAR(45) NULL,
   `country` VARCHAR(45) NULL,
