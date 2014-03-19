@@ -47,8 +47,12 @@ public class DababaseTester {
 
         repopulateDatabase(database);
 
-//        List<Integer> ids = new ArrayList<Integer>();
-//        List<Recipe> recipes = new RecipeDAO(database).getRecipesByIds(null);
-//        System.out.println(recipes);
+        List<Long> ids = new ArrayList<Long>();
+        ids.add(new Long(1));
+        ids.add(new Long(8));
+
+        List<Recipe> recipes = new RecipeDAO(database).getRecipesByIds(ids);
+        System.out.println(recipes);
+
     }
 }

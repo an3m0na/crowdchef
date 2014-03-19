@@ -12,7 +12,7 @@ import java.util.Date;
         ),
         @NamedNativeQuery(
                 name = "OneUserById",
-                query = "SELECT * FROM app_user WHERE id = NULLIF(:id, '')\\:\\:bigint",
+                query = "SELECT * FROM app_user WHERE id = :id",
                 resultClass = User.class
         ),
         @NamedNativeQuery(

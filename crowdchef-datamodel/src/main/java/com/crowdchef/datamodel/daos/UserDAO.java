@@ -52,7 +52,7 @@ public class UserDAO {
     }
 
     public User getUser(Long id) throws ValidationException {
-        List<User> result = database.retrieve("OneUserById", "id", "" + id, User.class);
+        List<User> result = database.retrieve("OneUserById", "id", id, User.class);
         if (result.size() < 1)
             throw new ValidationException(ValidationErrorCode.ID_NOT_EXIST);
         else if (result.size() > 1)

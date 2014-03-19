@@ -75,7 +75,7 @@ public class RecipeDAO {
     }
 
     public Recipe getRecipe(Long id) throws ValidationException {
-        List<Recipe> result = database.retrieve("OneRecipeById", "id", "" + id, Recipe.class);
+        List<Recipe> result = database.retrieve("OneRecipeById", "id", id, Recipe.class);
         if (result.size() < 1)
             throw new ValidationException(ValidationErrorCode.ID_NOT_EXIST);
         else if (result.size() > 1)
@@ -93,8 +93,7 @@ public class RecipeDAO {
             result = database.retrieve("AllRecipes", Recipe.class);
             return result;
         }
-        String idList = ids.toString();
-        result = database.retrieve("AllRecipesInIds", "ids", idList.substring(1, idList.length() - 1), Recipe.class);
+        result = database.retrieve("AllRecipesInIds", "ids", ids, Recipe.class);
         return result;
     }
 

@@ -9,7 +9,7 @@ import java.util.List;
 @NamedNativeQueries({
         @NamedNativeQuery(
                 name = "OneRecipeById",
-                query = "SELECT * FROM recipe WHERE id = NULLIF(:id, '')\\:\\:bigint",
+                query = "SELECT * FROM recipe WHERE id = :id",
                 resultClass = Recipe.class
         ),
         @NamedNativeQuery(
