@@ -25,6 +25,13 @@ public class WebService implements SparkApplication {
             }
         });
 
+        get(new Route("/checkRequest") {
+            @Override
+            public Object handle(final Request request, final Response response) {
+                return request.body();
+            }
+        });
+
         get(new Route("/listRecipes") {
             @Override
             public Object handle(final Request request, final Response response) {

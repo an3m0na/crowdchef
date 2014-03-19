@@ -7,25 +7,26 @@ import java.util.Date;
 @NamedNativeQueries({
         @NamedNativeQuery(
                 name = "AllUsers",
-                query = "SELECT * FROM user",
+                query = "SELECT * FROM app_user",
                 resultClass = User.class
         ),
         @NamedNativeQuery(
                 name = "OneUserById",
-                query = "SELECT * FROM user WHERE id = :id",
+                query = "SELECT * FROM app_user WHERE id = NULLIF(:id, '')\\:\\:bigint",
                 resultClass = User.class
         ),
         @NamedNativeQuery(
                 name = "OneUserByUsername",
-                query = "SELECT * FROM user WHERE username = :username",
+                query = "SELECT * FROM app_user WHERE username = :username",
                 resultClass = User.class
         )
 })
 @Entity
-@Table(name = "user")
+@Table(name = "app_user")
 public class User implements Serializable {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="app_user_id_seq")
+    @SequenceGenerator(name="app_user_id_seq", sequenceName="app_user_id_seq", allocationSize=1)
     private Long id;
 
     private String username;

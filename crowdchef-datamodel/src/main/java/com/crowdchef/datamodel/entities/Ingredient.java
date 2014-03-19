@@ -7,7 +7,8 @@ import java.io.Serializable;
 @Table(name = "ingredient")
 public class Ingredient implements Serializable {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="ingredient_id_seq")
+    @SequenceGenerator(name="ingredient_id_seq", sequenceName="ingredient_id_seq", allocationSize=1)
     private Long id;
 
     private String name;
