@@ -8,6 +8,7 @@ import spark.Route;
 import spark.servlet.SparkApplication;
 
 import static spark.Spark.get;
+import static spark.Spark.post;
 
 public class WebService implements SparkApplication {
     private CoreController controller;
@@ -21,6 +22,13 @@ public class WebService implements SparkApplication {
             @Override
             public Object handle(final Request request, final Response response) {
                 return "CrowdChefServer is On!";
+            }
+        });
+
+        get(new Route("/checkRequest") {
+            @Override
+            public Object handle(final Request request, final Response response) {
+                return request.body();
             }
         });
 
@@ -38,10 +46,24 @@ public class WebService implements SparkApplication {
             }
         });
 
+        post(new Route("/addRecipe") {
+            @Override
+            public Object handle(final Request request, final Response response) {
+                return request.body();
+            }
+        });
+
         get(new Route("/registerUser/:username/:password") {
             @Override
             public Object handle(final Request request, final Response response) {
                 return controller.registerUser(request.params("username"), request.params("password"));
+            }
+        });
+
+        get(new Route("/checkUser/:username/:password") {
+            @Override
+            public Object handle(final Request request, final Response response) {
+                return controller.checkUser(request.params("username"), request.params("password"));
             }
         });
 
@@ -66,6 +88,14 @@ public class WebService implements SparkApplication {
 
                 return controller.searchRecipes(request.params("searchQuery"),
                         request.params("field"));
+            }
+        });
+
+        get(new Route("/indexRecipes") {
+            @Override
+            public Object handle(final Request request, final Response response) {
+                controller.indexRecipes();
+                return "Recipes indexed";
             }
         });
 

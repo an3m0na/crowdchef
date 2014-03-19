@@ -36,6 +36,8 @@ public class Indexer {
 
             IndexWriter writer = new IndexWriter(dir, iwc);
             indexDocs(writer, mySelectAllRecipes);
+            writer.commit();
+            writer.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -49,11 +51,14 @@ public class Indexer {
             myDocument.add(new StringField("id",
                     "" + myRecipe.getId(),
                     Field.Store.YES));
-            myDocument.add(new TextField("title",
+            myDocument.add(new TextField("name",
                     myRecipe.getName(),
                     Field.Store.YES));
             myDocument.add(new TextField("description",
                     myRecipe.getDescription(),
+                    Field.Store.NO));
+            myDocument.add(new TextField("tag",
+                    myRecipe.getTags(),
                     Field.Store.NO));
             myDocument.add(new StringField("ingredient",
                     "//recipe-title",

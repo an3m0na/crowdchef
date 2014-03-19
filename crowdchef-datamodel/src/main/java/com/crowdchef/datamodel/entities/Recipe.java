@@ -32,7 +32,8 @@ import java.util.List;
 @Table(name = "recipe")
 public class Recipe implements Serializable {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="recipe_id_seq")
+    @SequenceGenerator(name="recipe_id_seq", sequenceName="recipe_id_seq", allocationSize=1)
     private Long id;
 
     private String name;
@@ -41,7 +42,7 @@ public class Recipe implements Serializable {
 
     private String tags;
 
-    @Column(columnDefinition = "blob")
+    @Lob
     private byte[] image;
 
     @Column(name = "image_url")
@@ -54,7 +55,7 @@ public class Recipe implements Serializable {
     private Date createTime;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "app_user_id")
     private User createUser;
 
     @OneToMany(mappedBy = "recipe", fetch = FetchType.EAGER)

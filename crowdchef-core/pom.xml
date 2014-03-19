@@ -10,10 +10,10 @@
     <version>1.0-SNAPSHOT</version>
     <dependencies>
         <dependency>
-            <groupId>crowdchef-datamodel</groupId>
-            <artifactId>crowdchef-datamodel</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
+        <groupId>crowdchef-datamodel</groupId>
+        <artifactId>crowdchef-datamodel</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </dependency>
         <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-core</artifactId>
@@ -38,6 +38,11 @@
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>1.7.1</version>
+        </dependency>
+        <dependency>
+            <groupId>postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>9.1-901.jdbc4</version>
         </dependency>
     </dependencies>
 

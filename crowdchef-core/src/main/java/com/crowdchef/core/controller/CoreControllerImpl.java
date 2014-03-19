@@ -7,6 +7,7 @@ import com.crowdchef.core.retriever.Indexer;
 import com.crowdchef.core.retriever.Searcher;
 import com.crowdchef.datamodel.CrowdChefDatabase;
 import com.crowdchef.datamodel.entities.Recipe;
+import com.crowdchef.datamodel.entities.User;
 import com.google.gson.*;
 
 import java.util.Arrays;
@@ -28,11 +29,10 @@ class CoreControllerImpl implements CoreController {
     }
 
     public static Gson buildGson(String excludeField) {
-        return buildGson(new String[]{excludeField});
+        return buildGson(Arrays.asList(excludeField));
     }
 
-    public static Gson buildGson(String[] excludeFields) {
-        final List<String> excludeList = Arrays.asList(excludeFields);
+    public static Gson buildGson(final List<String> excludeFields) {
         return new GsonBuilder()
                 .setExclusionStrategies(new ExclusionStrategy() {
 
@@ -41,7 +41,7 @@ class CoreControllerImpl implements CoreController {
                     }
 
                     public boolean shouldSkipField(FieldAttributes f) {
-                        return excludeList.contains(f.getName());
+                        return excludeFields.contains(f.getName());
                     }
                 })
                 .create();
@@ -50,7 +50,7 @@ class CoreControllerImpl implements CoreController {
     @Override
     public JsonElement getRecipe(Long id) {
         Recipe recipe = recipeHandler.getRecipe(id);
-        JsonElement result = buildGson(new String[]{"recipe", "createUser"}).toJsonTree(recipe);
+        JsonElement result = buildGson(Arrays.asList("recipe", "createUser")).toJsonTree(recipe);
         result.getAsJsonObject().addProperty("createUser", recipe.getCreateUser().getUsername());
         return result;
     }
@@ -58,14 +58,14 @@ class CoreControllerImpl implements CoreController {
     @Override
     public JsonElement listRecipes() {
         List<Recipe> recipes = recipeHandler.getRecipes();
-        JsonElement result = buildGson(new String[]{"recipe", "createUser"}).toJsonTree(recipes);
+        JsonElement result = buildGson(Arrays.asList("recipe", "createUser")).toJsonTree(recipes);
         return result;
     }
 
     @Override
     public JsonElement listRecipes(List<Long> ids) {
         List<Recipe> recipes = recipeHandler.getRecipesByIds(ids);
-        return buildGson(new String[]{"recipe", "createUser"}).toJsonTree(recipes);
+        return buildGson(Arrays.asList("recipe", "createUser")).toJsonTree(recipes);
     }
 
     @Override
@@ -92,7 +92,8 @@ class CoreControllerImpl implements CoreController {
 
     @Override
     public Long checkUser(String username, String password) {
-        return userHandler.checkUser(username, password).getId();
+        User user = userHandler.checkUser(username, password);
+        return user == null ? -1 : user.getId();
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.crowdchef.datamodel;
 import org.hibernate.*;
 import org.jetbrains.annotations.*;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 public class CrowdChefDatabase {
@@ -68,16 +69,46 @@ public class CrowdChefDatabase {
         return recordSet;
     }
 
+//    public <T> List<T> retrieve(String queryName,
+//                                String parameter,
+//                                String value,
+//                                Class<T> aClass)
+//    {
+//        session = DatabaseUtil.getSession();
+//        transaction = session.beginTransaction();
+//        Query myQuery = session.getNamedQuery(queryName);
+//        myQuery.setString(parameter, value);
+//
+//        List<T> recordSet = myQuery.list();
+//        session.close();
+//
+//        return recordSet;
+//    }
+
     public <T> List<T> retrieve(String queryName,
                                 String parameter,
-                                String value,
+                                Object value,
                                 Class<T> aClass)
     {
         session = DatabaseUtil.getSession();
         transaction = session.beginTransaction();
         Query myQuery = session.getNamedQuery(queryName);
-        myQuery.setString(parameter, value);
+        myQuery.setParameter(parameter, value);
+        List<T> recordSet = myQuery.list();
+        session.close();
 
+        return recordSet;
+    }
+
+    public <T> List<T> retrieve(String queryName,
+                                String parameter,
+                                List<?> value,
+                                Class<T> aClass)
+    {
+        session = DatabaseUtil.getSession();
+        transaction = session.beginTransaction();
+        Query myQuery = session.getNamedQuery(queryName);
+        myQuery.setParameterList(parameter, value);
         List<T> recordSet = myQuery.list();
         session.close();
 
