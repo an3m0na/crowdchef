@@ -45,6 +45,21 @@ public class WebService implements SparkApplication {
             }
         });
 
+        get(new Route("/checkDatabase") {
+            @Override
+            public Object handle(final Request request, final Response response) {
+                JsonObject result = new JsonObject();
+                try {
+                    result.add("result", controller.listRecipes());
+                    result.addProperty("successful", true);
+                } catch (Exception e) {
+                    result.addProperty("result", printStackTrace(e));
+                    result.addProperty("successful", false);
+                }
+                return result;
+            }
+        });
+
         get(new Route("/listRecipes") {
             @Override
             public Object handle(final Request request, final Response response) {

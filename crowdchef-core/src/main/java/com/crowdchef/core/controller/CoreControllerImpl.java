@@ -170,6 +170,9 @@ class CoreControllerImpl implements CoreController {
     @Override
     public JsonElement searchRecipes(String searchQuery, String field) {
         List<Long> recipeIds = searcher.search(searchQuery, field);
+        if(recipeIds == null)
+            indexRecipes();
+        searcher.search(searchQuery, field);
         return listRecipes(recipeIds);
     }
 
