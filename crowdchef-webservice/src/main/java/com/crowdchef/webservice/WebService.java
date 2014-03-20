@@ -10,11 +10,21 @@ import spark.Response;
 import spark.Route;
 import spark.servlet.SparkApplication;
 
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import static spark.Spark.get;
 import static spark.Spark.post;
 
 public class WebService implements SparkApplication {
     private CoreController controller;
+
+    public String printStackTrace(Exception e){
+        StringWriter sw = new StringWriter();
+        e.printStackTrace(new PrintWriter(sw));
+        return sw.toString();
+    }
 
     @Override
     public void init() {
@@ -43,7 +53,7 @@ public class WebService implements SparkApplication {
                     result.add("result", controller.listRecipes());
                     result.addProperty("successful", true);
                 } catch (Exception e) {
-                    result.addProperty("result", e.getMessage());
+                    result.addProperty("result", e.getMessage() == null? printStackTrace(e):e.getMessage());
                     result.addProperty("successful", false);
                 }
                 return result;
@@ -58,7 +68,7 @@ public class WebService implements SparkApplication {
                     result.add("result", controller.getRecipe(Long.parseLong(request.params("id"))));
                     result.addProperty("successful", true);
                 } catch (Exception e) {
-                    result.addProperty("result", e.getMessage());
+                    result.addProperty("result", e.getMessage() == null? printStackTrace(e):e.getMessage());
                     result.addProperty("successful", false);
                 }
                 return result;
@@ -74,7 +84,7 @@ public class WebService implements SparkApplication {
                     result.addProperty("result", controller.addRecipe(element));
                     result.addProperty("successful", true);
                 } catch (Exception e) {
-                    result.addProperty("result", e.getMessage());
+                    result.addProperty("result", e.getMessage() == null? printStackTrace(e):e.getMessage());
                     result.addProperty("successful", false);
                 }
                 return result;
@@ -90,7 +100,7 @@ public class WebService implements SparkApplication {
                     controller.updateRecipe(element);
                     result.addProperty("successful", true);
                 } catch (Exception e) {
-                    result.addProperty("result", e.getMessage());
+                    result.addProperty("result", e.getMessage() == null? printStackTrace(e):e.getMessage());
                     result.addProperty("successful", false);
                 }
                 return result;
@@ -106,7 +116,7 @@ public class WebService implements SparkApplication {
                     controller.updateIngredients(element);
                     result.addProperty("successful", true);
                 } catch (Exception e) {
-                    result.addProperty("result", e.getMessage());
+                    result.addProperty("result", e.getMessage() == null? printStackTrace(e):e.getMessage());
                     result.addProperty("successful", false);
                 }
                 return result;
@@ -121,7 +131,7 @@ public class WebService implements SparkApplication {
                     controller.deleteRecipe(Long.parseLong(request.params("id")));
                     result.addProperty("successful", true);
                 } catch (Exception e) {
-                    result.addProperty("result", e.getMessage());
+                    result.addProperty("result", e.getMessage() == null? printStackTrace(e):e.getMessage());
                     result.addProperty("successful", false);
                 }
                 return result;
@@ -136,7 +146,7 @@ public class WebService implements SparkApplication {
                     result.addProperty("result", controller.registerUser(request.params("username"), request.params("password")));
                     result.addProperty("successful", true);
                 } catch (Exception e) {
-                    result.addProperty("result", e.getMessage());
+                    result.addProperty("result", e.getMessage() == null? printStackTrace(e):e.getMessage());
                     result.addProperty("successful", false);
                 }
                 return result;
@@ -151,7 +161,7 @@ public class WebService implements SparkApplication {
                     result.addProperty("result", controller.checkUser(request.params("username"), request.params("password")));
                     result.addProperty("successful", true);
                 } catch (Exception e) {
-                    result.addProperty("result", e.getMessage());
+                    result.addProperty("result", e.getMessage() == null? printStackTrace(e):e.getMessage());
                     result.addProperty("successful", false);
                 }
                 return result;
@@ -166,7 +176,7 @@ public class WebService implements SparkApplication {
                     controller.unregisterUser(Long.parseLong(request.params("id")));
                     result.addProperty("successful", true);
                 } catch (Exception e) {
-                    result.addProperty("result", e.getMessage());
+                    result.addProperty("result", e.getMessage() == null? printStackTrace(e):e.getMessage());
                     result.addProperty("successful", false);
                 }
                 return result;
@@ -181,7 +191,7 @@ public class WebService implements SparkApplication {
                     result.add("result", controller.getUserInfo(Long.parseLong(request.params("id"))));
                     result.addProperty("successful", true);
                 } catch (Exception e) {
-                    result.addProperty("result", e.getMessage());
+                    result.addProperty("result", e.getMessage() == null? printStackTrace(e):e.getMessage());
                     result.addProperty("successful", false);
                 }
                 return result;
@@ -196,7 +206,7 @@ public class WebService implements SparkApplication {
                     result.add("result", controller.searchRecipes(request.params("searchQuery"), request.params("field")));
                     result.addProperty("successful", true);
                 } catch (Exception e) {
-                    result.addProperty("result", e.getMessage());
+                    result.addProperty("result", e.getMessage() == null? printStackTrace(e):e.getMessage());
                     result.addProperty("successful", false);
                 }
                 return result;
@@ -211,7 +221,7 @@ public class WebService implements SparkApplication {
                     controller.indexRecipes();
                     result.addProperty("successful", true);
                 } catch (Exception e) {
-                    result.addProperty("result", e.getMessage());
+                    result.addProperty("result", e.getMessage() == null? printStackTrace(e):e.getMessage());
                     result.addProperty("successful", false);
                 }
                 return result;
