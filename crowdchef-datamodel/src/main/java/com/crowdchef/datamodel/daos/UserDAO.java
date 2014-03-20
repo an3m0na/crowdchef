@@ -54,7 +54,7 @@ public class UserDAO {
     public User getUser(Long id) throws ValidationException {
         List<User> result = database.retrieve("OneUserById", "id", id, User.class);
         if (result.size() < 1)
-            throw new ValidationException(ValidationErrorCode.ID_NOT_EXIST);
+            throw new ValidationException(ValidationErrorCode.USER_INCORRECT);
         else if (result.size() > 1)
             throw new ValidationException(ValidationErrorCode.TOO_MANY_RESULTS);
         return result.get(0);
@@ -63,7 +63,7 @@ public class UserDAO {
     public User getUser(String username) throws ValidationException {
         List<User> result = database.retrieve("OneUserByUsername", "username", username, User.class);
         if (result.size() < 1)
-            throw new ValidationException(ValidationErrorCode.ID_NOT_EXIST);
+            throw new ValidationException(ValidationErrorCode.USER_INCORRECT);
         else if (result.size() > 1)
             throw new ValidationException(ValidationErrorCode.TOO_MANY_RESULTS);
         return result.get(0);

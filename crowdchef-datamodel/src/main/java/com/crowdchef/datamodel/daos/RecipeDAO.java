@@ -33,14 +33,21 @@ public class RecipeDAO {
         return recipe;
     }
 
+    public Recipe updateRecipe(Recipe recipe) throws ValidationException {
+        database.saveOrUpdate(recipe, Recipe.class);
+        return getRecipe(recipe.getId());
+    }
+
     public Recipe updateRecipe(Long id, String name, String description, String directions, String tags, String imageUrl, Long userId) throws ValidationException {
         return updateRecipe(id, name, description, directions, tags, imageUrl, new UserDAO(database).getUser(userId));
     }
 
     public Recipe deleteIngredients(Recipe recipe) {
-        List<Ingredient> ingredients = recipe.getIngredients();
-        recipe.setIngredients(null);
-        database.delete(ingredients, Ingredient.class);
+        //List<Ingredient> ingredients = recipe.getIngredients();
+        //recipe.setIngredients(null);
+        //database.delete(ingredients, Ingredient.class);
+        recipe.getIngredients().clear();
+        database.saveOrUpdate(recipe, Recipe.class);
         return recipe;
     }
 
@@ -52,11 +59,29 @@ public class RecipeDAO {
         List<Ingredient> ingredients = recipe.getIngredients();
         if (ingredients == null) {
             ingredients = new ArrayList<Ingredient>();
+            recipe.setIngredients(ingredients);
         }
+        ingredient.setRecipe(recipe);
         ingredients.add(ingredient);
-        recipe.setIngredients(ingredients);
-        database.saveOrUpdate(ingredient, Ingredient.class);
+        database.save(ingredient, Ingredient.class);
         return recipe;
+    }
+
+    public Recipe addIngredient(Long id, Ingredient ingredient) {
+        Recipe recipe = getRecipe(id);
+        addIngredient(recipe, ingredient);
+        return recipe;
+    }
+
+    public Recipe addIngredients(Recipe recipe, List<Ingredient> ingredients) {
+        for (Ingredient ingredient : ingredients) {
+            recipe = addIngredient(recipe, ingredient);
+        }
+        return recipe;
+    }
+
+    public Recipe addIngredients(Long id, List<Ingredient> ingredients) {
+        return addIngredients(getRecipe(id), ingredients);
     }
 
     public Recipe addIngredient(Recipe recipe, String name, String description, String quantity, Integer ord) {

@@ -32,8 +32,8 @@ import java.util.List;
 @Table(name = "recipe")
 public class Recipe implements Serializable {
     @Id
-    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="recipe_id_seq")
-    @SequenceGenerator(name="recipe_id_seq", sequenceName="recipe_id_seq", allocationSize=1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "recipe_id_seq")
+    @SequenceGenerator(name = "recipe_id_seq", sequenceName = "recipe_id_seq", allocationSize = 1)
     private Long id;
 
     private String name;
@@ -55,10 +55,10 @@ public class Recipe implements Serializable {
     private Date createTime;
 
     @ManyToOne
-    @JoinColumn(name = "app_user_id")
+    @JoinColumn(name = "app_user_id", updatable = false)
     private User createUser;
 
-    @OneToMany(mappedBy = "recipe", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "recipe", fetch = FetchType.EAGER, cascade = CascadeType.ALL ,orphanRemoval=true)
     @OrderBy("ord asc")
     private List<Ingredient> ingredients;
 
@@ -153,6 +153,6 @@ public class Recipe implements Serializable {
 
     @Override
     public String toString() {
-        return "Recipe{" + getId() + " added " + getCreateTime() + " by " + getCreateUser().getUsername() + "} = " + getName() + " (" + getDescription() + "): " + getDirections() + "\n\tIngredients: " + getIngredients().toString();
+        return "Recipe{" + getId() + " added " + getCreateTime() + " by " + getCreateUser() != null ? getCreateUser().getUsername() : null + "} = " + getName() + " (" + getDescription() + "): " + getDirections() + "\n\tIngredients: " + getIngredients() != null ? getIngredients().toString() : null;
     }
 }

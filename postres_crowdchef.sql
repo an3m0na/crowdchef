@@ -47,8 +47,7 @@ CREATE TABLE "ingredient" (
     "description" varchar(510) DEFAULT NULL,
     "quantity" varchar(90) DEFAULT NULL,
     "ord" integer DEFAULT NULL,
-    PRIMARY KEY ("id"),
-    UNIQUE ("name")
+    PRIMARY KEY ("id")
 );
 
 INSERT INTO "ingredient" VALUES (1,1,'tomato sauce','spicy tomato sauce is best','200 mL',2),(2,1,'chicken breast',NULL,'400 g',1);

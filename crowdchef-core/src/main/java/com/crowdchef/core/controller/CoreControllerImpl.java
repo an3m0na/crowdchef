@@ -6,10 +6,14 @@ import com.crowdchef.core.handlers.UserHandler;
 import com.crowdchef.core.retriever.Indexer;
 import com.crowdchef.core.retriever.Searcher;
 import com.crowdchef.datamodel.CrowdChefDatabase;
+import com.crowdchef.datamodel.ValidationErrorCode;
+import com.crowdchef.datamodel.ValidationException;
+import com.crowdchef.datamodel.entities.Ingredient;
 import com.crowdchef.datamodel.entities.Recipe;
 import com.crowdchef.datamodel.entities.User;
 import com.google.gson.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -47,6 +51,18 @@ class CoreControllerImpl implements CoreController {
                 .create();
     }
 
+    public static JsonElement toShortForm(List<Recipe> recipeList) {
+        JsonArray result = new JsonArray();
+        JsonObject tmp;
+        for (Recipe r : recipeList) {
+            tmp = new JsonObject();
+            tmp.addProperty("id", r.getId());
+            tmp.addProperty("name", r.getName());
+            result.add(tmp);
+        }
+        return result;
+    }
+
     @Override
     public JsonElement getRecipe(Long id) {
         Recipe recipe = recipeHandler.getRecipe(id);
@@ -63,9 +79,23 @@ class CoreControllerImpl implements CoreController {
     }
 
     @Override
+    public JsonElement listRecipes(boolean shortForm) {
+        if (!shortForm)
+            return listRecipes();
+        return toShortForm(recipeHandler.getRecipes());
+    }
+
+    @Override
     public JsonElement listRecipes(List<Long> ids) {
         List<Recipe> recipes = recipeHandler.getRecipesByIds(ids);
         return buildGson(Arrays.asList("recipe", "createUser")).toJsonTree(recipes);
+    }
+
+    @Override
+    public JsonElement listRecipes(List<Long> ids, boolean shortForm) {
+        if (!shortForm)
+            return listRecipes(ids);
+        return toShortForm(recipeHandler.getRecipesByIds(ids));
     }
 
     @Override
@@ -73,11 +103,47 @@ class CoreControllerImpl implements CoreController {
         recipeHandler.deleteRecipe(id);
     }
 
+    protected List<Ingredient> parseIngredients(JsonElement recipeJson) {
+        JsonElement ingredients = recipeJson.getAsJsonObject().get("ingredients");
+        List<Ingredient> ret = new ArrayList<Ingredient>();
+        if (ingredients == null)
+            return ret;
+        for (JsonElement i : ingredients.getAsJsonArray()) {
+            Ingredient ingredient = new Gson().fromJson(i.getAsJsonObject(), Ingredient.class);
+            ret.add(ingredient);
+        }
+        return ret;
+    }
+
     @Override
     public Long addRecipe(JsonElement recipeJson) {
-        JsonObject recipeObject = recipeJson.getAsJsonObject();
-        Recipe recipe = recipeHandler.addRecipe(recipeObject.get("name").getAsString(), recipeObject.get("description").getAsString(), recipeObject.get("directions").getAsString(), recipeObject.get("tags").getAsString(), recipeObject.get("imageUrl").getAsString(), recipeObject.get("userId").getAsBigInteger().longValue());
+        Recipe recipe = buildGson(Arrays.asList("id", "userId", "ingredients")).fromJson(recipeJson, Recipe.class);
+        JsonElement userId = recipeJson.getAsJsonObject().get("userId");
+        if (userId == null)
+            throw new ValidationException(ValidationErrorCode.USER_NOT_PASSED);
+        recipe.setCreateUser(userHandler.getUser(userId.getAsBigInteger().longValue()));
+        recipe = recipeHandler.addRecipe(recipe);
+        recipeHandler.addIngredients(recipe, parseIngredients(recipeJson));
         return recipe.getId();
+    }
+
+    @Override
+    public void updateRecipe(JsonElement recipeJson) {
+        Recipe recipe = buildGson(Arrays.asList("userId", "ingredients")).fromJson(recipeJson, Recipe.class);
+        recipe = recipeHandler.updateRecipe(recipe);
+        recipe = recipeHandler.deleteIngredients(recipe);
+        recipeHandler.addIngredients(recipe, parseIngredients(recipeJson));
+    }
+
+    @Override
+    public void updateIngredients(JsonElement recipeJson) {
+        JsonElement recipeId = recipeJson.getAsJsonObject().get("recipeId");
+        if (recipeId == null) {
+            throw new ValidationException(ValidationErrorCode.ID_NOT_EXIST);
+        }
+        Long idLong = recipeId.getAsBigInteger().longValue();
+        recipeHandler.deleteIngredients(idLong);
+        recipeHandler.addIngredients(idLong, parseIngredients(recipeJson));
     }
 
     @Override
@@ -104,6 +170,9 @@ class CoreControllerImpl implements CoreController {
     @Override
     public JsonElement searchRecipes(String searchQuery, String field) {
         List<Long> recipeIds = searcher.search(searchQuery, field);
+        if(recipeIds == null)
+            indexRecipes();
+        searcher.search(searchQuery, field);
         return listRecipes(recipeIds);
     }
 

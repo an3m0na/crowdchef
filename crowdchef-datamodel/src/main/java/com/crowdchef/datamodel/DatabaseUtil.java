@@ -12,6 +12,7 @@ public class DatabaseUtil {
         try
         {
             Configuration myConfiguration = new Configuration().configure(HYBERNATE_CONFIG);
+            System.out.println("Connecting to database at "+myConfiguration.getProperty("hibernate.connection.url"));
             ServiceRegistry myServiceRegistry = new ServiceRegistryBuilder().applySettings(myConfiguration.getProperties())
                     .buildServiceRegistry();
             sessionFactory = myConfiguration.buildSessionFactory(myServiceRegistry);

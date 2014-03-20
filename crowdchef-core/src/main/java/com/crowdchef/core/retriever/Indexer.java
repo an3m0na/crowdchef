@@ -1,6 +1,7 @@
 package com.crowdchef.core.retriever;
 
 import com.crowdchef.datamodel.CrowdChefDatabase;
+import com.crowdchef.datamodel.entities.Ingredient;
 import com.crowdchef.datamodel.entities.Recipe;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -60,9 +61,14 @@ public class Indexer {
             myDocument.add(new TextField("tag",
                     myRecipe.getTags(),
                     Field.Store.NO));
-            myDocument.add(new StringField("ingredient",
-                    "//recipe-title",
-                    Field.Store.NO));
+            List<Ingredient> ingredients = myRecipe.getIngredients();
+            if (ingredients != null) {
+                for (Ingredient i : ingredients) {
+                    myDocument.add(new StringField("ingredient",
+                            i.getName(),
+                            Field.Store.NO));
+                }
+            }
 
             aWriter.addDocument(myDocument);
         }

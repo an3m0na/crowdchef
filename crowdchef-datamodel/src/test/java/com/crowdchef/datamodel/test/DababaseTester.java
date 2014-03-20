@@ -1,12 +1,16 @@
 package com.crowdchef.datamodel.test;
 
 import com.crowdchef.datamodel.CrowdChefDatabase;
+import com.crowdchef.datamodel.ValidationErrorCode;
+import com.crowdchef.datamodel.ValidationException;
 import com.crowdchef.datamodel.daos.RecipeDAO;
 import com.crowdchef.datamodel.daos.UserDAO;
+import com.crowdchef.datamodel.entities.Ingredient;
 import com.crowdchef.datamodel.entities.Recipe;
 import com.crowdchef.datamodel.entities.User;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -45,14 +49,17 @@ public class DababaseTester {
 //        }
 //        System.out.println(recipe.getId());
 
-        repopulateDatabase(database);
+        //repopulateDatabase(database);
 
-        List<Long> ids = new ArrayList<Long>();
-        ids.add(new Long(1));
-        ids.add(new Long(8));
+        RecipeDAO recipeDAO = new RecipeDAO(database);
 
-        List<Recipe> recipes = new RecipeDAO(database).getRecipesByIds(ids);
-        System.out.println(recipes);
+        Recipe recipe =  recipeDAO.getRecipe(new Long(11));
+       recipeDAO.deleteIngredients(recipe);
+
+        recipeDAO.addIngredients(recipe, Arrays.asList(new Ingredient(recipe, "bla")));
+
+
+
 
     }
 }

@@ -1,6 +1,7 @@
 package com.crowdchef.core.handlers;
 
 import com.crowdchef.datamodel.CrowdChefDatabase;
+import com.crowdchef.datamodel.ValidationErrorCode;
 import com.crowdchef.datamodel.ValidationException;
 import com.crowdchef.datamodel.daos.UserDAO;
 import com.crowdchef.datamodel.entities.User;
@@ -17,15 +18,10 @@ public class UserHandler {
         return userDao.updateUser((Long) null, username, password);
     }
 
-    public User checkUser(String username, String password) {
-        User user;
-        try {
-            user = userDao.getUser(username);
-        } catch (ValidationException e) {
-            return null;
-        }
+    public User checkUser(String username, String password) throws ValidationException {
+        User user = userDao.getUser(username);
         if (!user.getPassword().equals(password))
-            return null;
+            throw new ValidationException(ValidationErrorCode.USER_INCORRECT);
         return user;
     }
 
