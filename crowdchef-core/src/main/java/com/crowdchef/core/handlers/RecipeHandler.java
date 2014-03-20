@@ -3,8 +3,10 @@ package com.crowdchef.core.handlers;
 
 import com.crowdchef.datamodel.CrowdChefDatabase;
 import com.crowdchef.datamodel.daos.RecipeDAO;
+import com.crowdchef.datamodel.entities.Ingredient;
 import com.crowdchef.datamodel.entities.Recipe;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class RecipeHandler {
@@ -15,6 +17,10 @@ public class RecipeHandler {
 
     }
 
+    public Recipe addRecipe(Recipe recipe) {
+        return recipeDao.updateRecipe(recipe);
+    }
+
     public Recipe addRecipe(String name, String description, String directions, String tags, String imageUrl, Long userId) {
         return recipeDao.updateRecipe(null, name, description, directions, tags, imageUrl, userId);
     }
@@ -22,6 +28,31 @@ public class RecipeHandler {
     public Recipe updateRecipe(Long id, String name, String description, String directions, String tags, String imageUrl, Long userId) {
         return recipeDao.updateRecipe(id, name, description, directions, tags, imageUrl, userId);
     }
+
+    public Recipe updateRecipe(Recipe recipe) {
+        return recipeDao.updateRecipe(recipe);
+    }
+
+    public Recipe addIngredient(Recipe recipe, Ingredient ingredient) {
+        return recipeDao.addIngredient(recipe, ingredient);
+    }
+
+    public Recipe addIngredients(Long id, List<Ingredient> ingredients) {
+        return recipeDao.addIngredients(id, ingredients);
+    }
+
+    public Recipe addIngredients(Recipe recipe, List<Ingredient> ingredients) {
+        return recipeDao.addIngredients(recipe, ingredients);
+    }
+
+    public Recipe deleteIngredients(Long id) {
+        return recipeDao.deleteIngredients(id);
+    }
+
+    public Recipe deleteIngredients(Recipe recipe) {
+        return recipeDao.deleteIngredients(recipe);
+    }
+
 
     public Recipe getRecipe(Long id) {
         return recipeDao.getRecipe(id);
@@ -39,7 +70,7 @@ public class RecipeHandler {
         return recipeDao.getRecipesByIds(ids);
     }
 
-    public void deleteRecipe(Long id){
+    public void deleteRecipe(Long id) {
         recipeDao.deleteRecipe(id);
     }
 }

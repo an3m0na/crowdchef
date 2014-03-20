@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "ingredient")
+@Table(name = "ingredient", uniqueConstraints=@UniqueConstraint(columnNames = {"recipe_id", "name"}))
 public class Ingredient implements Serializable {
     @Id
     @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="ingredient_id_seq")
