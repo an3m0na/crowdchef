@@ -37,6 +37,9 @@ public class DababaseTester {
     public static void main(String[] args) {
         CrowdChefDatabase database = new CrowdChefDatabase();
 
+        RecipeDAO recipeDAO = new RecipeDAO(database);
+        UserDAO userDAO = new UserDAO(database);
+
 
 //        List<Result> results=
 //                database.retrieve("query1", "name", "perfect recipe for succes", Result.class);
@@ -51,14 +54,14 @@ public class DababaseTester {
 
         //repopulateDatabase(database);
 
-        RecipeDAO recipeDAO = new RecipeDAO(database);
+//
+//
+//        Recipe recipe =  recipeDAO.getRecipe(new Long(11));
+//       recipeDAO.deleteIngredients(recipe);
+//
+//        recipeDAO.addIngredients(recipe, Arrays.asList(new Ingredient(recipe, "bla")));
 
-        Recipe recipe =  recipeDAO.getRecipe(new Long(11));
-       recipeDAO.deleteIngredients(recipe);
-
-        recipeDAO.addIngredients(recipe, Arrays.asList(new Ingredient(recipe, "bla")));
-
-
+        System.out.println(recipeDAO.getAllRecipes());
 
 
     }
