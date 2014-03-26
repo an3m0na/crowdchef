@@ -42,4 +42,8 @@ public interface CoreController {
 
     public JsonElement searchRecipes(String searchQuery, String field);
 
+    public void rateRecipe(Long recipeId, Long userId, Integer rating);
+
+    public void assignTaste(JsonElement tasteScoreJson);
+
 }

@@ -7,11 +7,11 @@ CREATE SCHEMA IF NOT EXISTS `crowdchef` DEFAULT CHARACTER SET utf8 COLLATE utf8_
 USE `crowdchef` ;
 
 -- -----------------------------------------------------
--- Table `crowdchef`.`user`
+-- Table `crowdchef`.`app_user`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `crowdchef`.`user` ;
+DROP TABLE IF EXISTS `crowdchef`.`app_user` ;
 
-CREATE TABLE IF NOT EXISTS `crowdchef`.`user` (
+CREATE TABLE IF NOT EXISTS `crowdchef`.`app_user` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `username` VARCHAR(16) NOT NULL,
   `password` VARCHAR(32) NOT NULL,
@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS `crowdchef`.`recipe` (
   INDEX `fk_recipe_user1_idx` (`user_id` ASC),
   CONSTRAINT `fk_recipe_user1`
     FOREIGN KEY (`user_id`)
-    REFERENCES `crowdchef`.`user` (`id`)
+    REFERENCES `crowdchef`.`app_user` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -63,8 +63,8 @@ CREATE TABLE IF NOT EXISTS `crowdchef`.`ingredient` (
   CONSTRAINT `fk_ingredient_recipe1`
     FOREIGN KEY (`recipe_id`)
     REFERENCES `crowdchef`.`recipe` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
@@ -87,7 +87,7 @@ CREATE TABLE IF NOT EXISTS `crowdchef`.`location` (
   INDEX `fk_location_user1_idx` (`user_id` ASC),
   CONSTRAINT `fk_location_user1`
     FOREIGN KEY (`user_id`)
-    REFERENCES `crowdchef`.`user` (`id`)
+    REFERENCES `crowdchef`.`app_user` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -114,9 +114,34 @@ CREATE TABLE IF NOT EXISTS `crowdchef`.`reviews` (
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_reviews_user1`
     FOREIGN KEY (`user_id`)
-    REFERENCES `crowdchef`.`user` (`id`)
+    REFERENCES `crowdchef`.`app_user` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `crowdchef`.`recipe_taste_score`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `crowdchef`.`recipe_taste_score` ;
+
+CREATE TABLE IF NOT EXISTS `crowdchef`.`recipe_taste_score` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `recipe_id` BIGINT NOT NULL,
+  `sweet` INT NULL,
+  `salty` INT NULL,
+  `sour` INT NULL,
+  `spicy` INT NULL,
+  `savory` INT NULL,
+  `create_time` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  INDEX `fk_recipe_taste_score_recipe1_idx` (`recipe_id` ASC),
+  UNIQUE INDEX `recipe_id_UNIQUE` (`recipe_id` ASC),
+  CONSTRAINT `fk_recipe_taste_score_recipe1`
+    FOREIGN KEY (`recipe_id`)
+    REFERENCES `crowdchef`.`recipe` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
@@ -131,40 +156,6 @@ CREATE TABLE IF NOT EXISTS `crowdchef`.`taste_category` (
   `name` VARCHAR(45) NULL,
   `ord` INT NULL,
   PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `crowdchef`.`taste_score`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `crowdchef`.`taste_score` ;
-
-CREATE TABLE IF NOT EXISTS `crowdchef`.`taste_score` (
-  `id` BIGINT NOT NULL AUTO_INCREMENT,
-  `taste_category_id` BIGINT NOT NULL,
-  `recipe_id` BIGINT NOT NULL,
-  `score` INT NULL,
-  `create_time` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
-  `user_id` BIGINT NOT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `fk_taste_score_recipe1_idx` (`recipe_id` ASC),
-  INDEX `fk_taste_score_user1_idx` (`user_id` ASC),
-  INDEX `fk_taste_score_taste_category1_idx` (`taste_category_id` ASC),
-  CONSTRAINT `fk_taste_score_recipe1`
-    FOREIGN KEY (`recipe_id`)
-    REFERENCES `crowdchef`.`recipe` (`id`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE,
-  CONSTRAINT `fk_taste_score_user1`
-    FOREIGN KEY (`user_id`)
-    REFERENCES `crowdchef`.`user` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_taste_score_taste_category1`
-    FOREIGN KEY (`taste_category_id`)
-    REFERENCES `crowdchef`.`taste_category` (`id`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
@@ -184,7 +175,7 @@ CREATE TABLE IF NOT EXISTS `crowdchef`.`wine_instance` (
   INDEX `fk_wine_instance_user1_idx` (`user_id` ASC),
   CONSTRAINT `fk_wine_instance_user1`
     FOREIGN KEY (`user_id`)
-    REFERENCES `crowdchef`.`user` (`id`)
+    REFERENCES `crowdchef`.`app_user` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -206,7 +197,7 @@ CREATE TABLE IF NOT EXISTS `crowdchef`.`ingr_instance` (
   INDEX `fk_ingr_instance_user1_idx` (`user_id` ASC),
   CONSTRAINT `fk_ingr_instance_user1`
     FOREIGN KEY (`user_id`)
-    REFERENCES `crowdchef`.`user` (`id`)
+    REFERENCES `crowdchef`.`app_user` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -238,7 +229,7 @@ CREATE TABLE IF NOT EXISTS `crowdchef`.`ingredient_has_ingr_instance` (
     ON UPDATE CASCADE,
   CONSTRAINT `fk_ingredient_has_ingr_instance_user1`
     FOREIGN KEY (`user_id`)
-    REFERENCES `crowdchef`.`user` (`id`)
+    REFERENCES `crowdchef`.`app_user` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -265,7 +256,7 @@ CREATE TABLE IF NOT EXISTS `crowdchef`.`ingr_instance_ratings` (
     ON UPDATE CASCADE,
   CONSTRAINT `fk_ingr_instance_ratings_user1`
     FOREIGN KEY (`user_id`)
-    REFERENCES `crowdchef`.`user` (`id`)
+    REFERENCES `crowdchef`.`app_user` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -294,7 +285,7 @@ CREATE TABLE IF NOT EXISTS `crowdchef`.`wine` (
     ON UPDATE CASCADE,
   CONSTRAINT `fk_wine_user1`
     FOREIGN KEY (`user_id`)
-    REFERENCES `crowdchef`.`user` (`id`)
+    REFERENCES `crowdchef`.`app_user` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -326,7 +317,7 @@ CREATE TABLE IF NOT EXISTS `crowdchef`.`wine_has_wine_instance` (
     ON UPDATE CASCADE,
   CONSTRAINT `fk_wine_has_wine_instance_user1`
     FOREIGN KEY (`user_id`)
-    REFERENCES `crowdchef`.`user` (`id`)
+    REFERENCES `crowdchef`.`app_user` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -358,7 +349,7 @@ CREATE TABLE IF NOT EXISTS `crowdchef`.`wine_instance_has_location` (
     ON UPDATE CASCADE,
   CONSTRAINT `fk_wine_instance_has_location_user1`
     FOREIGN KEY (`user_id`)
-    REFERENCES `crowdchef`.`user` (`id`)
+    REFERENCES `crowdchef`.`app_user` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -385,7 +376,7 @@ CREATE TABLE IF NOT EXISTS `crowdchef`.`wine_instance_ratings` (
     ON UPDATE CASCADE,
   CONSTRAINT `fk_wine_instance_ratings_user1`
     FOREIGN KEY (`user_id`)
-    REFERENCES `crowdchef`.`user` (`id`)
+    REFERENCES `crowdchef`.`app_user` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -417,7 +408,7 @@ CREATE TABLE IF NOT EXISTS `crowdchef`.`ingr_instance_has_location` (
     ON UPDATE CASCADE,
   CONSTRAINT `fk_ingr_instance_has_location_user1`
     FOREIGN KEY (`user_id`)
-    REFERENCES `crowdchef`.`user` (`id`)
+    REFERENCES `crowdchef`.`app_user` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -440,7 +431,7 @@ CREATE TABLE IF NOT EXISTS `crowdchef`.`user_info` (
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_user_info_user1`
     FOREIGN KEY (`user_id`)
-    REFERENCES `crowdchef`.`user` (`id`)
+    REFERENCES `crowdchef`.`app_user` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
@@ -475,7 +466,7 @@ CREATE TABLE IF NOT EXISTS `crowdchef`.`user_has_badge` (
   INDEX `fk_user_has_badge_user1_idx` (`user_id` ASC),
   CONSTRAINT `fk_user_has_badge_user1`
     FOREIGN KEY (`user_id`)
-    REFERENCES `crowdchef`.`user` (`id`)
+    REFERENCES `crowdchef`.`app_user` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_user_has_badge_badge1`
@@ -484,6 +475,52 @@ CREATE TABLE IF NOT EXISTS `crowdchef`.`user_has_badge` (
     ON DELETE CASCADE
     ON UPDATE CASCADE);
 
+
+-- -----------------------------------------------------
+-- Table `crowdchef`.`recipe_rating`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `crowdchef`.`recipe_rating` ;
+
+CREATE TABLE IF NOT EXISTS `crowdchef`.`recipe_rating` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `recipe_id` BIGINT NOT NULL,
+  `rating` INT NOT NULL,
+  `user_id` BIGINT NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_recipe_rating_recipe1_idx` (`recipe_id` ASC),
+  INDEX `fk_recipe_rating_user1_idx` (`user_id` ASC),
+  CONSTRAINT `fk_recipe_rating_recipe1`
+    FOREIGN KEY (`recipe_id`)
+    REFERENCES `crowdchef`.`recipe` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_recipe_rating_user1`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `crowdchef`.`app_user` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+USE `crowdchef` ;
+
+-- -----------------------------------------------------
+-- Placeholder table for view `crowdchef`.`recipe_rating_view`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `crowdchef`.`recipe_rating_view` (`recipe_id` INT, `rating` INT, `votes` INT);
+
+-- -----------------------------------------------------
+-- View `crowdchef`.`recipe_rating_view`
+-- -----------------------------------------------------
+DROP VIEW IF EXISTS `crowdchef`.`recipe_rating_view` ;
+DROP TABLE IF EXISTS `crowdchef`.`recipe_rating_view`;
+USE `crowdchef`;
+CREATE  OR REPLACE VIEW recipe_rating_view AS 
+ SELECT b.id AS recipe_id, 
+    COALESCE(avg(a.rating), 0) AS rating, 
+    COUNT(a.user_id) AS votes
+   FROM recipe_rating a
+   RIGHT JOIN recipe b ON a.recipe_id = b.id
+  GROUP BY b.id;
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;

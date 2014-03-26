@@ -5,6 +5,7 @@ import com.crowdchef.datamodel.CrowdChefDatabase;
 import com.crowdchef.datamodel.daos.RecipeDAO;
 import com.crowdchef.datamodel.entities.Ingredient;
 import com.crowdchef.datamodel.entities.Recipe;
+import com.crowdchef.datamodel.entities.RecipeTasteScore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,5 +73,13 @@ public class RecipeHandler {
 
     public void deleteRecipe(Long id) {
         recipeDao.deleteRecipe(id);
+    }
+
+    public void rateRecipe(Long recipeId, Long userId, Integer rating){
+        recipeDao.rateRecipe(recipeId, userId, rating);
+    }
+
+    public void assignTaste(Long recipeId, RecipeTasteScore tasteScore){
+        recipeDao.assignTaste(recipeId, tasteScore);
     }
 }

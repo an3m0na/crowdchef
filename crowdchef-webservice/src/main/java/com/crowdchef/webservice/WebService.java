@@ -5,6 +5,7 @@ import com.crowdchef.core.controller.CoreControllerFactory;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.hibernate.exception.ConstraintViolationException;
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -67,7 +68,10 @@ public class WebService implements SparkApplication {
                 try {
                     result.add("result", controller.listRecipes());
                     result.addProperty("successful", true);
-                } catch (Exception e) {
+                } catch(ConstraintViolationException e){
+                    result.addProperty("result", "Constraint "+e.getConstraintName()+" violated");
+                    result.addProperty("successful", false);
+                }catch (Exception e) {
                     result.addProperty("result", e.getMessage() == null? printStackTrace(e):e.getMessage());
                     result.addProperty("successful", false);
                 }
@@ -82,7 +86,10 @@ public class WebService implements SparkApplication {
                 try {
                     result.add("result", controller.getRecipe(Long.parseLong(request.params("id"))));
                     result.addProperty("successful", true);
-                } catch (Exception e) {
+                } catch(ConstraintViolationException e){
+                    result.addProperty("result", "Constraint "+e.getConstraintName()+" violated");
+                    result.addProperty("successful", false);
+                }catch (Exception e) {
                     result.addProperty("result", e.getMessage() == null? printStackTrace(e):e.getMessage());
                     result.addProperty("successful", false);
                 }
@@ -98,7 +105,10 @@ public class WebService implements SparkApplication {
                     JsonElement element = new JsonParser().parse(request.body());
                     result.addProperty("result", controller.addRecipe(element));
                     result.addProperty("successful", true);
-                } catch (Exception e) {
+                } catch(ConstraintViolationException e){
+                    result.addProperty("result", "Constraint "+e.getConstraintName()+" violated");
+                    result.addProperty("successful", false);
+                }catch (Exception e) {
                     result.addProperty("result", e.getMessage() == null? printStackTrace(e):e.getMessage());
                     result.addProperty("successful", false);
                 }
@@ -114,7 +124,10 @@ public class WebService implements SparkApplication {
                     JsonElement element = new JsonParser().parse(request.body());
                     controller.updateRecipe(element);
                     result.addProperty("successful", true);
-                } catch (Exception e) {
+                } catch(ConstraintViolationException e){
+                    result.addProperty("result", "Constraint "+e.getConstraintName()+" violated");
+                    result.addProperty("successful", false);
+                }catch (Exception e) {
                     result.addProperty("result", e.getMessage() == null? printStackTrace(e):e.getMessage());
                     result.addProperty("successful", false);
                 }
@@ -130,7 +143,10 @@ public class WebService implements SparkApplication {
                     JsonElement element = new JsonParser().parse(request.body());
                     controller.updateIngredients(element);
                     result.addProperty("successful", true);
-                } catch (Exception e) {
+                } catch(ConstraintViolationException e){
+                    result.addProperty("result", "Constraint "+e.getConstraintName()+" violated");
+                    result.addProperty("successful", false);
+                }catch (Exception e) {
                     result.addProperty("result", e.getMessage() == null? printStackTrace(e):e.getMessage());
                     result.addProperty("successful", false);
                 }
@@ -145,7 +161,10 @@ public class WebService implements SparkApplication {
                 try {
                     controller.deleteRecipe(Long.parseLong(request.params("id")));
                     result.addProperty("successful", true);
-                } catch (Exception e) {
+                } catch(ConstraintViolationException e){
+                    result.addProperty("result", "Constraint "+e.getConstraintName()+" violated");
+                    result.addProperty("successful", false);
+                }catch (Exception e) {
                     result.addProperty("result", e.getMessage() == null? printStackTrace(e):e.getMessage());
                     result.addProperty("successful", false);
                 }
@@ -160,7 +179,10 @@ public class WebService implements SparkApplication {
                 try {
                     result.addProperty("result", controller.registerUser(request.params("username"), request.params("password")));
                     result.addProperty("successful", true);
-                } catch (Exception e) {
+                } catch(ConstraintViolationException e){
+                    result.addProperty("result", "Constraint "+e.getConstraintName()+" violated");
+                    result.addProperty("successful", false);
+                }catch (Exception e) {
                     result.addProperty("result", e.getMessage() == null? printStackTrace(e):e.getMessage());
                     result.addProperty("successful", false);
                 }
@@ -175,7 +197,10 @@ public class WebService implements SparkApplication {
                 try {
                     result.addProperty("result", controller.checkUser(request.params("username"), request.params("password")));
                     result.addProperty("successful", true);
-                } catch (Exception e) {
+                } catch(ConstraintViolationException e){
+                    result.addProperty("result", "Constraint "+e.getConstraintName()+" violated");
+                    result.addProperty("successful", false);
+                }catch (Exception e) {
                     result.addProperty("result", e.getMessage() == null? printStackTrace(e):e.getMessage());
                     result.addProperty("successful", false);
                 }
@@ -190,7 +215,10 @@ public class WebService implements SparkApplication {
                 try {
                     controller.unregisterUser(Long.parseLong(request.params("id")));
                     result.addProperty("successful", true);
-                } catch (Exception e) {
+                } catch(ConstraintViolationException e){
+                    result.addProperty("result", "Constraint "+e.getConstraintName()+" violated");
+                    result.addProperty("successful", false);
+                }catch (Exception e) {
                     result.addProperty("result", e.getMessage() == null? printStackTrace(e):e.getMessage());
                     result.addProperty("successful", false);
                 }
@@ -205,7 +233,10 @@ public class WebService implements SparkApplication {
                 try {
                     result.add("result", controller.getUserInfo(Long.parseLong(request.params("id"))));
                     result.addProperty("successful", true);
-                } catch (Exception e) {
+                } catch(ConstraintViolationException e){
+                    result.addProperty("result", "Constraint "+e.getConstraintName()+" violated");
+                    result.addProperty("successful", false);
+                }catch (Exception e) {
                     result.addProperty("result", e.getMessage() == null? printStackTrace(e):e.getMessage());
                     result.addProperty("successful", false);
                 }
@@ -220,7 +251,10 @@ public class WebService implements SparkApplication {
                 try {
                     result.add("result", controller.searchRecipes(request.params("searchQuery"), request.params("field")));
                     result.addProperty("successful", true);
-                } catch (Exception e) {
+                } catch(ConstraintViolationException e){
+                    result.addProperty("result", "Constraint "+e.getConstraintName()+" violated");
+                    result.addProperty("successful", false);
+                }catch (Exception e) {
                     result.addProperty("result", e.getMessage() == null? printStackTrace(e):e.getMessage());
                     result.addProperty("successful", false);
                 }
@@ -235,7 +269,46 @@ public class WebService implements SparkApplication {
                 try {
                     controller.indexRecipes();
                     result.addProperty("successful", true);
-                } catch (Exception e) {
+                } catch(ConstraintViolationException e){
+                    result.addProperty("result", "Constraint "+e.getConstraintName()+" violated");
+                    result.addProperty("successful", false);
+                }catch (Exception e) {
+                    result.addProperty("result", e.getMessage() == null? printStackTrace(e):e.getMessage());
+                    result.addProperty("successful", false);
+                }
+                return result;
+            }
+        });
+
+        get(new Route("/rateRecipe/:recipeId/:userId/:rating") {
+            @Override
+            public Object handle(final Request request, final Response response) {
+                JsonObject result = new JsonObject();
+                try {
+                    controller.rateRecipe(Long.parseLong(request.params("recipeId")), Long.parseLong(request.params("userId")),  Integer.parseInt(request.params("rating")));
+                    result.addProperty("successful", true);
+                } catch(ConstraintViolationException e){
+                    result.addProperty("result", "Constraint "+e.getConstraintName()+" violated");
+                    result.addProperty("successful", false);
+                }catch (Exception e) {
+                    result.addProperty("result", e.getMessage() == null? printStackTrace(e):e.getMessage());
+                    result.addProperty("successful", false);
+                }
+                return result;
+            }
+        });
+
+        post(new Route("/assignTaste") {
+            @Override
+            public Object handle(final Request request, final Response response) {
+                JsonObject result = new JsonObject();
+                try {
+                    controller.assignTaste(new JsonParser().parse(request.body()));
+                    result.addProperty("successful", true);
+                } catch(ConstraintViolationException e){
+                    result.addProperty("result", "Constraint "+e.getConstraintName()+" violated");
+                    result.addProperty("successful", false);
+                }catch (Exception e) {
                     result.addProperty("result", e.getMessage() == null? printStackTrace(e):e.getMessage());
                     result.addProperty("successful", false);
                 }

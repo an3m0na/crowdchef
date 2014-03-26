@@ -9,24 +9,25 @@ import java.util.List;
 @NamedNativeQueries({
         @NamedNativeQuery(
                 name = "OneRecipeById",
-                query = "SELECT * FROM recipe WHERE id = :id",
+                query = "SELECT COALESCE((SELECT avg(rating) FROM recipe_rating WHERE recipe_id = a.id), 0) rating, a.* FROM recipe a WHERE id = :id",
                 resultClass = Recipe.class
         ),
         @NamedNativeQuery(
                 name = "AllRecipesLikeName",
-                query = "SELECT * FROM recipe WHERE LOWER(name) LIKE '%'||LOWER(:name)||'%'",
+                query = "SELECT COALESCE((SELECT avg(rating) FROM recipe_rating WHERE recipe_id = a.id), 0) rating, a.* FROM recipe a WHERE LOWER(name) LIKE '%'||LOWER(:name)||'%'",
                 resultClass = Recipe.class
         ),
         @NamedNativeQuery(
                 name = "AllRecipes",
-                query = "SELECT * FROM recipe",
+                query = "SELECT COALESCE((SELECT avg(rating) FROM recipe_rating WHERE recipe_id = a.id), 0) rating, a.* FROM recipe a",
                 resultClass = Recipe.class
         ),
         @NamedNativeQuery(
                 name = "AllRecipesInIds",
-                query = "SELECT * FROM recipe WHERE id in (:ids)",
+                query = "SELECT COALESCE((SELECT avg(rating) FROM recipe_rating WHERE recipe_id = a.id), 0) rating, a.* FROM recipe a WHERE id in (:ids)",
                 resultClass = Recipe.class
         )
+
 })
 @Entity
 @Table(name = "recipe")
@@ -42,7 +43,6 @@ public class Recipe implements Serializable {
 
     private String tags;
 
-    @Lob
     private byte[] image;
 
     @Column(name = "image_url")
@@ -55,13 +55,19 @@ public class Recipe implements Serializable {
     private Date createTime;
 
     @ManyToOne
-    @JoinColumn(name = "app_user_id", updatable = false)
+    @JoinColumn(name = "user_id", updatable = false)
     private User createUser;
 
-    @OneToMany(mappedBy = "recipe", fetch = FetchType.EAGER, cascade = CascadeType.ALL ,orphanRemoval=true)
+    @OneToMany(mappedBy = "recipe", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("ord asc")
     private List<Ingredient> ingredients;
 
+    @OneToOne
+    @PrimaryKeyJoinColumn(name="recipe_id")
+    private RecipeComputedRating rating;
+
+    @OneToOne(mappedBy = "recipe", fetch = FetchType.EAGER)
+    private RecipeTasteScore tasteScore;
 
     public Recipe() {
     }
@@ -151,8 +157,24 @@ public class Recipe implements Serializable {
         this.ingredients = ingredients;
     }
 
+    public RecipeComputedRating getRating() {
+        return rating;
+    }
+
+    public void setRating(RecipeComputedRating rating) {
+        this.rating = rating;
+    }
+
+    public RecipeTasteScore getTasteScore() {
+        return tasteScore;
+    }
+
+    public void setTasteScore(RecipeTasteScore tasteScore) {
+        this.tasteScore = tasteScore;
+    }
+
     @Override
     public String toString() {
-        return "Recipe{" + getId() + " added " + getCreateTime() + " by " + getCreateUser() != null ? getCreateUser().getUsername() : null + "} = " + getName() + " (" + getDescription() + "): " + getDirections() + "\n\tIngredients: " + getIngredients() != null ? getIngredients().toString() : null;
+        return "Recipe{" + getId() + " added " + getCreateTime() + " by " + (getCreateUser() != null ? getCreateUser().getUsername() : null) + "} = " + getName() + " (" + getDescription() + "): " + getDirections() + "\n\tIngredients: " + (getIngredients() != null ? getIngredients().toString() : null);
     }
 }

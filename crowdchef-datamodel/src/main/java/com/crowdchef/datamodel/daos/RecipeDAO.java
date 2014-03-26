@@ -3,11 +3,10 @@ package com.crowdchef.datamodel.daos;
 import com.crowdchef.datamodel.CrowdChefDatabase;
 import com.crowdchef.datamodel.ValidationErrorCode;
 import com.crowdchef.datamodel.ValidationException;
-import com.crowdchef.datamodel.entities.Ingredient;
-import com.crowdchef.datamodel.entities.Recipe;
-import com.crowdchef.datamodel.entities.User;
+import com.crowdchef.datamodel.entities.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class RecipeDAO {
@@ -125,5 +124,45 @@ public class RecipeDAO {
     public List<Recipe> getRecipesByName(String name) {
         List<Recipe> result = database.retrieve("AllRecipesLikeName", "name", name, Recipe.class);
         return result;
+    }
+
+    public void rateRecipe(Long recipeId, Long userId, Integer score) {
+        HashMap map = new HashMap();
+        map.put("recipe_id", recipeId);
+        map.put("user_id", userId);
+        List<RecipeRating> ratings = database.retrieve("OneRating", map, RecipeRating.class);
+        RecipeRating rating;
+        if (ratings == null || ratings.size() < 1) {
+            rating = new RecipeRating(recipeId, score, userId);
+        } else {
+            rating = ratings.get(0);
+            rating.setRating(score);
+        }
+        database.saveOrUpdate(rating, RecipeRating.class);
+    }
+
+    public Recipe assignTaste(Recipe recipe, RecipeTasteScore newTaste) {
+        RecipeTasteScore oldTaste = recipe.getTasteScore();
+        if (oldTaste == null) {
+            newTaste.setRecipe(recipe);
+            recipe.setTasteScore(newTaste);
+            database.save(newTaste, RecipeTasteScore.class);
+        } else {
+            oldTaste.setSweet(newTaste.getSweet());
+            oldTaste.setSalty(newTaste.getSalty());
+            oldTaste.setSour(newTaste.getSour());
+            oldTaste.setSpicy(newTaste.getSpicy());
+            oldTaste.setSavory(newTaste.getSavory());
+            database.saveOrUpdate(oldTaste, RecipeTasteScore.class);
+        }
+        return recipe;
+    }
+
+    public Recipe assignTaste(Long recipeId, RecipeTasteScore tasteScore) {
+        return assignTaste(getRecipe(recipeId), tasteScore);
+    }
+
+    public Recipe assignTaste(Long recipeId, Integer sweet, Integer sour, Integer salty, Integer spicy, Integer savory) {
+        return assignTaste(recipeId, new RecipeTasteScore(null, sweet, sour, salty, spicy, savory));
     }
 }

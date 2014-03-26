@@ -5,7 +5,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "app_user_info")
+@Table(name = "user_info")
 public class UserInfo implements Serializable {
     @Id
     @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="app_user_info_id_seq")
@@ -23,7 +23,7 @@ public class UserInfo implements Serializable {
 
     @OneToOne
     @MapsId
-    @JoinColumn(name = "app_user_id")
+    @JoinColumn(name = "user_id")
     private User user;
 
     public UserInfo() {
