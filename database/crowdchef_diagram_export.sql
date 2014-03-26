@@ -121,6 +121,31 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
+-- Table `crowdchef`.`recipe_taste_score`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `crowdchef`.`recipe_taste_score` ;
+
+CREATE TABLE IF NOT EXISTS `crowdchef`.`recipe_taste_score` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `recipe_id` BIGINT NOT NULL,
+  `sweet` INT NULL,
+  `salty` INT NULL,
+  `sour` INT NULL,
+  `spicy` INT NULL,
+  `savory` INT NULL,
+  `create_time` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  INDEX `fk_recipe_taste_score_recipe1_idx` (`recipe_id` ASC),
+  UNIQUE INDEX `recipe_id_UNIQUE` (`recipe_id` ASC),
+  CONSTRAINT `fk_recipe_taste_score_recipe1`
+    FOREIGN KEY (`recipe_id`)
+    REFERENCES `crowdchef`.`recipe` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
 -- Table `crowdchef`.`taste_category`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `crowdchef`.`taste_category` ;
@@ -131,40 +156,6 @@ CREATE TABLE IF NOT EXISTS `crowdchef`.`taste_category` (
   `name` VARCHAR(45) NULL,
   `ord` INT NULL,
   PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `crowdchef`.`taste_score`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `crowdchef`.`taste_score` ;
-
-CREATE TABLE IF NOT EXISTS `crowdchef`.`taste_score` (
-  `id` BIGINT NOT NULL AUTO_INCREMENT,
-  `taste_category_id` BIGINT NOT NULL,
-  `recipe_id` BIGINT NOT NULL,
-  `score` INT NULL,
-  `create_time` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
-  `user_id` BIGINT NOT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `fk_taste_score_recipe1_idx` (`recipe_id` ASC),
-  INDEX `fk_taste_score_user1_idx` (`user_id` ASC),
-  INDEX `fk_taste_score_taste_category1_idx` (`taste_category_id` ASC),
-  CONSTRAINT `fk_taste_score_recipe1`
-    FOREIGN KEY (`recipe_id`)
-    REFERENCES `crowdchef`.`recipe` (`id`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE,
-  CONSTRAINT `fk_taste_score_user1`
-    FOREIGN KEY (`user_id`)
-    REFERENCES `crowdchef`.`app_user` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_taste_score_taste_category1`
-    FOREIGN KEY (`taste_category_id`)
-    REFERENCES `crowdchef`.`taste_category` (`id`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
@@ -510,6 +501,26 @@ CREATE TABLE IF NOT EXISTS `crowdchef`.`recipe_rating` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
+USE `crowdchef` ;
+
+-- -----------------------------------------------------
+-- Placeholder table for view `crowdchef`.`recipe_rating_view`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `crowdchef`.`recipe_rating_view` (`recipe_id` INT, `rating` INT, `votes` INT);
+
+-- -----------------------------------------------------
+-- View `crowdchef`.`recipe_rating_view`
+-- -----------------------------------------------------
+DROP VIEW IF EXISTS `crowdchef`.`recipe_rating_view` ;
+DROP TABLE IF EXISTS `crowdchef`.`recipe_rating_view`;
+USE `crowdchef`;
+CREATE  OR REPLACE VIEW recipe_rating_view AS 
+ SELECT b.id AS recipe_id, 
+    COALESCE(avg(a.rating), 0) AS rating, 
+    COUNT(a.user_id) AS votes
+   FROM recipe_rating a
+   RIGHT JOIN recipe b ON a.recipe_id = b.id
+  GROUP BY b.id;
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
