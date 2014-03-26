@@ -1,17 +1,11 @@
 package com.crowdchef.datamodel.test;
 
 import com.crowdchef.datamodel.CrowdChefDatabase;
-import com.crowdchef.datamodel.ValidationErrorCode;
-import com.crowdchef.datamodel.ValidationException;
 import com.crowdchef.datamodel.daos.RecipeDAO;
 import com.crowdchef.datamodel.daos.UserDAO;
-import com.crowdchef.datamodel.entities.Ingredient;
 import com.crowdchef.datamodel.entities.Recipe;
 import com.crowdchef.datamodel.entities.User;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import org.hibernate.exception.ConstraintViolationException;
 
 
 public class DababaseTester {
@@ -24,7 +18,7 @@ public class DababaseTester {
         recipeDAO.deleteAllRecipes();
         userDAO.deleteAllUsers();
 
-        User user = userDAO.updateUser((Long)null, "john", "john");
+        User user = userDAO.updateUser((Long) null, "john", "john");
         userDAO.updateUserInfo(user, "john@gmail.com", "Some Street 124", "Delft", "Netherlands");
         //userDAO.updateUser(user, "john", "johnson");
         userDAO.updateUserInfo(user.getId(), "john@gmail.com", "Some Street 124", "Rotterdam", "Netherlands");
@@ -45,14 +39,20 @@ public class DababaseTester {
 //                database.retrieve("query1", "name", "perfect recipe for succes", Result.class);
 //        List<Result> results2=
 //                database.retrieve("query2", Result.class);
-//        Recipe recipe = (Recipe)DatabaseUtil.getSession().createCriteria(Recipe.class).add(Restrictions.eq("name","perfect recipe for succes")).uniqueResult();
+        //Recipe recipe = (Recipe)DatabaseUtil.getSession().createCriteria(Recipe.class).add(Restrictions.eq("id", 11L)).uniqueResult();
 //        List<Recipe> recipes= DatabaseUtil.getSession().createCriteria(Recipe.class).add(Restrictions.eq("name","perfect recipe for succes")).list();
 //        for(Recipe r: recipes){
-//            System.out.println("recipe id: " +r.getId());
+//            System.out.println("recipe id: " +r.getRatingId());
 //        }
-//        System.out.println(recipe.getId());
+        //   System.out.println(recipe.getRating());
 
         //repopulateDatabase(database);
+        try {
+            recipeDAO.assignTaste(2L, 3, 4, 4, 1, 3);
+            System.out.println(recipeDAO.getRecipe(2L).getTasteScore().getSavory());
+        } catch (ConstraintViolationException e) {
+            System.out.println("Constraint " + e.getConstraintName() + " violated");
+        }
 
 //
 //
@@ -61,8 +61,9 @@ public class DababaseTester {
 //
 //        recipeDAO.addIngredients(recipe, Arrays.asList(new Ingredient(recipe, "bla")));
 
-        System.out.println(recipeDAO.getAllRecipes());
+            //  System.out.println(recipeDAO.getRecipe(11L).getRating());
+            //Query query = DatabaseUtil.getSession().createSQLQuery("SELECT COALESCE((SELECT avg(rating) FROM recipe_rating WHERE recipe_id = a.id), 0) rating, a.* FROM recipe a WHERE id = :id").setParameter("id", 11L);
+            //System.out.println(query.li);
 
-
+        }
     }
-}

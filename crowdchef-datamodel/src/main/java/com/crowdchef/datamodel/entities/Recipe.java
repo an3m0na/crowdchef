@@ -1,11 +1,8 @@
 package com.crowdchef.datamodel.entities;
 
 
-import org.hibernate.annotations.Formula;
-
 import javax.persistence.*;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -61,12 +58,16 @@ public class Recipe implements Serializable {
     @JoinColumn(name = "user_id", updatable = false)
     private User createUser;
 
-    @OneToMany(mappedBy = "recipe", fetch = FetchType.EAGER, cascade = CascadeType.ALL ,orphanRemoval=true)
+    @OneToMany(mappedBy = "recipe", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("ord asc")
     private List<Ingredient> ingredients;
 
-    @Transient
-    private BigDecimal rating;
+    @OneToOne
+    @PrimaryKeyJoinColumn(name="recipe_id")
+    private RecipeComputedRating rating;
+
+    @OneToOne(mappedBy = "recipe", fetch = FetchType.EAGER)
+    private RecipeTasteScore tasteScore;
 
     public Recipe() {
     }
@@ -156,12 +157,20 @@ public class Recipe implements Serializable {
         this.ingredients = ingredients;
     }
 
-    public BigDecimal getRating() {
+    public RecipeComputedRating getRating() {
         return rating;
     }
 
-    public void setRating(BigDecimal rating) {
+    public void setRating(RecipeComputedRating rating) {
         this.rating = rating;
+    }
+
+    public RecipeTasteScore getTasteScore() {
+        return tasteScore;
+    }
+
+    public void setTasteScore(RecipeTasteScore tasteScore) {
+        this.tasteScore = tasteScore;
     }
 
     @Override

@@ -10,6 +10,7 @@ import com.crowdchef.datamodel.ValidationErrorCode;
 import com.crowdchef.datamodel.ValidationException;
 import com.crowdchef.datamodel.entities.Ingredient;
 import com.crowdchef.datamodel.entities.Recipe;
+import com.crowdchef.datamodel.entities.RecipeTasteScore;
 import com.crowdchef.datamodel.entities.User;
 import com.google.gson.*;
 
@@ -66,7 +67,7 @@ class CoreControllerImpl implements CoreController {
     @Override
     public JsonElement getRecipe(Long id) {
         Recipe recipe = recipeHandler.getRecipe(id);
-        JsonElement result = buildGson(Arrays.asList("recipe", "createUser")).toJsonTree(recipe);
+        JsonElement result = buildGson(Arrays.asList("recipe", "createUser", "ratingId")).toJsonTree(recipe);
         result.getAsJsonObject().addProperty("createUser", recipe.getCreateUser().getUsername());
         return result;
     }
@@ -74,7 +75,7 @@ class CoreControllerImpl implements CoreController {
     @Override
     public JsonElement listRecipes() {
         List<Recipe> recipes = recipeHandler.getRecipes();
-        JsonElement result = buildGson(Arrays.asList("recipe", "createUser")).toJsonTree(recipes);
+        JsonElement result = buildGson(Arrays.asList("recipe", "createUser", "ratingId")).toJsonTree(recipes);
         return result;
     }
 
@@ -88,7 +89,7 @@ class CoreControllerImpl implements CoreController {
     @Override
     public JsonElement listRecipes(List<Long> ids) {
         List<Recipe> recipes = recipeHandler.getRecipesByIds(ids);
-        return buildGson(Arrays.asList("recipe", "createUser")).toJsonTree(recipes);
+        return buildGson(Arrays.asList("recipe", "createUser", "ratingId")).toJsonTree(recipes);
     }
 
     @Override
@@ -170,7 +171,7 @@ class CoreControllerImpl implements CoreController {
     @Override
     public JsonElement searchRecipes(String searchQuery, String field) {
         List<Long> recipeIds = searcher.search(searchQuery, field);
-        if(recipeIds == null)
+        if (recipeIds == null)
             indexRecipes();
         searcher.search(searchQuery, field);
         return listRecipes(recipeIds);
@@ -179,5 +180,20 @@ class CoreControllerImpl implements CoreController {
     @Override
     public void indexRecipes() {
         indexer.index(recipeHandler.getRecipes());
+    }
+
+    @Override
+    public void rateRecipe(Long recipeId, Long userId, Integer rating) {
+        recipeHandler.rateRecipe(recipeId, userId, rating);
+    }
+
+    @Override
+    public void assignTaste(JsonElement tasteScoreJson) {
+        RecipeTasteScore tasteScore = buildGson(Arrays.asList("id", "recipe", "recipeId")).fromJson(tasteScoreJson, RecipeTasteScore.class);
+        JsonElement recipeId = tasteScoreJson.getAsJsonObject().get("recipeId");
+        if(recipeId == null){
+                throw new ValidationException(ValidationErrorCode.RECIPE_NOT_PASSED);
+        }
+        recipeHandler.assignTaste(recipeId.getAsBigInteger().longValue(), tasteScore);
     }
 }

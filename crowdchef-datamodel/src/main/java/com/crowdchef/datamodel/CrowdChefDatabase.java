@@ -38,10 +38,29 @@ public class CrowdChefDatabase {
         session.close();
     }
 
+//    @SuppressWarnings({"List conversion", "unchecked"})
+//    public <T> List<T> retrieve(
+//            String queryName,
+//            Map<String, String> parameters,
+//            Class<T> aClass)
+//    {
+//        session = DatabaseUtil.getSession();
+//        transaction = session.beginTransaction();
+//        Query myQuery = session.getNamedQuery(queryName);
+//        for (String parameter : parameters.keySet())
+//        {
+//            myQuery.setString(parameter, parameters.get(parameter));
+//        }
+//        List<T> recordSet = myQuery.list();
+//        session.close();
+//
+//        return recordSet;
+//    }
+
     @SuppressWarnings({"List conversion", "unchecked"})
     public <T> List<T> retrieve(
             String queryName,
-            Map<String, String> parameters,
+            Map<String, Object> parameters,
             Class<T> aClass)
     {
         session = DatabaseUtil.getSession();
@@ -49,7 +68,7 @@ public class CrowdChefDatabase {
         Query myQuery = session.getNamedQuery(queryName);
         for (String parameter : parameters.keySet())
         {
-            myQuery.setString(parameter, parameters.get(parameter));
+            myQuery.setParameter(parameter, parameters.get(parameter));
         }
         List<T> recordSet = myQuery.list();
         session.close();

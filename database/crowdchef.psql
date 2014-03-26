@@ -56,8 +56,7 @@ CREATE TABLE "ingredient" (
     "description" varchar(510) DEFAULT NULL,
     "quantity" varchar(90) DEFAULT NULL,
     "ord" integer DEFAULT NULL,
-    PRIMARY KEY ("id"),
-    UNIQUE ("name")
+    PRIMARY KEY ("id")
 );
 
 CREATE TABLE "ingredient_has_ingr_instance" (

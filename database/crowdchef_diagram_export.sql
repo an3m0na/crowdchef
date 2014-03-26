@@ -60,7 +60,6 @@ CREATE TABLE IF NOT EXISTS `crowdchef`.`ingredient` (
   `ord` INT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_ingredient_recipe1_idx` (`recipe_id` ASC),
-  UNIQUE INDEX `name_UNIQUE` (`name` ASC),
   CONSTRAINT `fk_ingredient_recipe1`
     FOREIGN KEY (`recipe_id`)
     REFERENCES `crowdchef`.`recipe` (`id`)
