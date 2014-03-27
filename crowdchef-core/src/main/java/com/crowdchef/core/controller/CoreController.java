@@ -1,12 +1,10 @@
 package com.crowdchef.core.controller;
 
 
-import com.crowdchef.datamodel.ValidationErrorCode;
-import com.crowdchef.datamodel.ValidationException;
-import com.crowdchef.datamodel.entities.Recipe;
 import com.google.gson.JsonElement;
+import org.apache.lucene.queryparser.classic.ParseException;
 
-import java.util.Arrays;
+import java.io.IOException;
 import java.util.List;
 
 public interface CoreController {
@@ -38,12 +36,18 @@ public interface CoreController {
 
     public JsonElement getUserInfo(Long id);
 
-    public void indexRecipes();
+    public void indexRecipes() throws IOException;
 
-    public JsonElement searchRecipes(String searchQuery, String field);
+    public JsonElement searchRecipes(String searchQuery, String field) throws IOException, ParseException;
 
     public void rateRecipe(Long recipeId, Long userId, Integer rating);
 
     public void assignTaste(JsonElement tasteScoreJson);
+
+    public JsonElement listUsers();
+
+    public JsonElement suggestQuery(String query, String field);
+
+    public JsonElement checkQuery(String query, String field);
 
 }

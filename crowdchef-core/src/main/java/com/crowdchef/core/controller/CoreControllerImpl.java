@@ -5,6 +5,7 @@ import com.crowdchef.core.handlers.RecipeHandler;
 import com.crowdchef.core.handlers.UserHandler;
 import com.crowdchef.core.retriever.Indexer;
 import com.crowdchef.core.retriever.Searcher;
+import com.crowdchef.core.retriever.Suggester;
 import com.crowdchef.datamodel.CrowdChefDatabase;
 import com.crowdchef.datamodel.ValidationErrorCode;
 import com.crowdchef.datamodel.ValidationException;
@@ -13,7 +14,9 @@ import com.crowdchef.datamodel.entities.Recipe;
 import com.crowdchef.datamodel.entities.RecipeTasteScore;
 import com.crowdchef.datamodel.entities.User;
 import com.google.gson.*;
+import org.apache.lucene.queryparser.classic.ParseException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -24,13 +27,21 @@ class CoreControllerImpl implements CoreController {
     private RecipeHandler recipeHandler;
     private final Searcher searcher;
     private final Indexer indexer;
+    private final Suggester suggester;
 
     protected CoreControllerImpl() {
         this.database = new CrowdChefDatabase();
         this.userHandler = new UserHandler(this.database);
         this.recipeHandler = new RecipeHandler(this.database);
-        this.searcher = new Searcher();
-        this.indexer = new Indexer();
+        try {
+            this.indexer = new Indexer();
+            indexRecipes();
+            this.searcher = new Searcher();
+            this.suggester = new Suggester();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Could not initialize Lucene");
+        }
     }
 
     public static Gson buildGson(String excludeField) {
@@ -169,17 +180,19 @@ class CoreControllerImpl implements CoreController {
     }
 
     @Override
-    public JsonElement searchRecipes(String searchQuery, String field) {
+    public JsonElement searchRecipes(String searchQuery, String field) throws IOException, ParseException {
         List<Long> recipeIds = searcher.search(searchQuery, field);
-        if (recipeIds == null)
-            indexRecipes();
         searcher.search(searchQuery, field);
         return listRecipes(recipeIds);
     }
 
     @Override
-    public void indexRecipes() {
+    public void indexRecipes() throws IOException {
         indexer.index(recipeHandler.getRecipes());
+        if (searcher != null)
+            searcher.initSearcher();
+        if (suggester != null)
+            suggester.initSuggester();
     }
 
     @Override
@@ -191,9 +204,25 @@ class CoreControllerImpl implements CoreController {
     public void assignTaste(JsonElement tasteScoreJson) {
         RecipeTasteScore tasteScore = buildGson(Arrays.asList("id", "recipe", "recipeId")).fromJson(tasteScoreJson, RecipeTasteScore.class);
         JsonElement recipeId = tasteScoreJson.getAsJsonObject().get("recipeId");
-        if(recipeId == null){
-                throw new ValidationException(ValidationErrorCode.RECIPE_NOT_PASSED);
+        if (recipeId == null) {
+            throw new ValidationException(ValidationErrorCode.RECIPE_NOT_PASSED);
         }
         recipeHandler.assignTaste(recipeId.getAsBigInteger().longValue(), tasteScore);
+    }
+
+    @Override
+    public JsonElement listUsers() {
+        List<User> users = userHandler.listUsers();
+        return buildGson(Arrays.asList("user", "password")).toJsonTree(users);
+    }
+
+    @Override
+    public JsonElement suggestQuery(String query, String field) {
+        return new GsonBuilder().create().toJsonTree(suggester.autoSuggest(query, field));
+    }
+
+    @Override
+    public JsonElement checkQuery(String query, String field) {
+        return null;
     }
 }

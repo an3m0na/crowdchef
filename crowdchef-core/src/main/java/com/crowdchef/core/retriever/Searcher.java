@@ -14,40 +14,42 @@ import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Searcher {
 
+    IndexSearcher searcher;
+    Analyzer analyzer;
+
+    public Searcher() throws IOException {
+        initSearcher();
+    }
+
+    public void initSearcher() throws IOException {
+        IndexReader reader = DirectoryReader.open(FSDirectory.open(new File("indexes")));
+        searcher = new IndexSearcher(reader);
+        analyzer = new StandardAnalyzer(Version.LUCENE_44);
+    }
+
     public List<Long> search(final String aSearchQuery,
-                             final String aField) {
-        List<Long> mySearchResults = null;
-        try {
-            IndexReader reader = DirectoryReader.open(FSDirectory.open(new File("indexes")));
-            IndexSearcher searcher = new IndexSearcher(reader);
-            Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_44);
-            BufferedReader in = null;
+                             final String aField) throws IOException, ParseException {
+        List<Long> mySearchResults;
+        QueryParser parser = new QueryParser(Version.LUCENE_44,
+                aField,
+                analyzer);
 
-            QueryParser parser = new QueryParser(Version.LUCENE_44,
-                    aField,
-                    analyzer);
+        Query query = parser.parse(aSearchQuery);
 
-            Query query = parser.parse(aSearchQuery);
+        TopDocs mySearch = searcher.search(query, null, 100);
 
-            TopDocs mySearch = searcher.search(query, null, 100);
+        mySearchResults = new ArrayList<Long>();
 
-            mySearchResults = new ArrayList<Long>();
-
-            for (ScoreDoc myDoc : mySearch.scoreDocs) {
-                Document doc = searcher.doc(myDoc.doc);
-                mySearchResults.add(Long.parseLong(doc.get("id")));
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ParseException e) {
-            e.printStackTrace();
+        for (ScoreDoc myDoc : mySearch.scoreDocs) {
+            Document doc = searcher.doc(myDoc.doc);
+            mySearchResults.add(Long.parseLong(doc.get("id")));
         }
         return mySearchResults;
     }

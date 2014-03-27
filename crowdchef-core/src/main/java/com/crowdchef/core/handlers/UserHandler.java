@@ -7,6 +7,8 @@ import com.crowdchef.datamodel.daos.UserDAO;
 import com.crowdchef.datamodel.entities.User;
 import com.crowdchef.datamodel.entities.UserInfo;
 
+import java.util.List;
+
 public class UserHandler {
     private UserDAO userDao;
 
@@ -43,5 +45,9 @@ public class UserHandler {
 
     public void deleteUser(Long id) {
         userDao.deleteUser(id);
+    }
+
+    public List<User> listUsers(){
+        return userDao.getAllUsers();
     }
 }
