@@ -316,5 +316,59 @@ public class WebService implements SparkApplication {
             }
         });
 
+        get(new Route("/listUsers") {
+            @Override
+            public Object handle(final Request request, final Response response) {
+                JsonObject result = new JsonObject();
+                try {
+                    result.add("result", controller.listUsers());
+                    result.addProperty("successful", true);
+                } catch(ConstraintViolationException e){
+                    result.addProperty("result", "Constraint "+e.getConstraintName()+" violated");
+                    result.addProperty("successful", false);
+                }catch (Exception e) {
+                    result.addProperty("result", e.getMessage() == null? printStackTrace(e):e.getMessage());
+                    result.addProperty("successful", false);
+                }
+                return result;
+            }
+        });
+
+        get(new Route("/suggestTerm/:term/:field") {
+            @Override
+            public Object handle(final Request request, final Response response) {
+                JsonObject result = new JsonObject();
+                try {
+                    result.add("result", controller.suggestTerm(request.params("term"), request.params("field")));
+                    result.addProperty("successful", true);
+                } catch(ConstraintViolationException e){
+                    result.addProperty("result", "Constraint "+e.getConstraintName()+" violated");
+                    result.addProperty("successful", false);
+                }catch (Exception e) {
+                    result.addProperty("result", e.getMessage() == null? printStackTrace(e):e.getMessage());
+                    result.addProperty("successful", false);
+                }
+                return result;
+            }
+        });
+
+        get(new Route("/checkTerm/:term/:field") {
+            @Override
+            public Object handle(final Request request, final Response response) {
+                JsonObject result = new JsonObject();
+                try {
+                    result.add("result", controller.checkTerm(request.params("term"), request.params("field")));
+                    result.addProperty("successful", true);
+                } catch(ConstraintViolationException e){
+                    result.addProperty("result", "Constraint "+e.getConstraintName()+" violated");
+                    result.addProperty("successful", false);
+                }catch (Exception e) {
+                    result.addProperty("result", e.getMessage() == null? printStackTrace(e):e.getMessage());
+                    result.addProperty("successful", false);
+                }
+                return result;
+            }
+        });
+
     }
 }

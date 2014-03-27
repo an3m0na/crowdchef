@@ -3,10 +3,8 @@ package com.crowdchef.core.test;
 
 import com.crowdchef.core.controller.CoreController;
 import com.crowdchef.core.controller.CoreControllerFactory;
-import com.crowdchef.core.handlers.RecipeHandler;
-import com.crowdchef.datamodel.CrowdChefDatabase;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+
+import java.io.IOException;
 
 public class CoreControllerTester {
     public static void main(String[] args) {
@@ -20,7 +18,7 @@ public class CoreControllerTester {
 //        JsonParser parser = new JsonParser();
 //        JsonObject obj = (JsonObject)parser.parse("{\"id\":10,\"name\":\"Perfect recipe\",\"description\":\"Awesome recipe for a recipe\",\"tags\":\"perfect,inception\",\"directions\":\"Stir recipe until becomes recipe\",\"createTime\":\"Mar 19, 2014 2:25:32 PM\",\"ingredients\":[{\"id\":20,\"name\":\"chicken breast\",\"quantity\":\"400 g\",\"ord\":1},{\"id\":19,\"name\":\"tomato sauce\",\"description\":\"spicy tomato sauce is best\",\"quantity\":\"200 mL\",\"ord\":2}], \"userId\":1}");
 //        controller.addRecipe(obj);
-        System.out.println(controller.getRecipe(11L));
+//        System.out.println(controller.getRecipe(11L));
 //        System.out.println(new Gson().toJsonTree(new Long(2)));
 
 //        JsonParser parser = new JsonParser();
@@ -28,6 +26,17 @@ public class CoreControllerTester {
  //controller.updateIngredients(obj);
 //        JsonObject obj = (JsonObject) parser.parse("{\"id\":11,\"name\":\"Regular donner\",\"description\":\"Alleen vlees\",\"tags\":\"donner,kebap,vlees\",\"directions\":\"Just ask the Turkish guy\",\"createTime\":\"Mar 19, 2014 2:25:32 PM\",\"ingredients\":[{\"id\":20,\"name\":\"chicken breast\",\"quantity\":\"400 g\",\"ord\":1},{\"id\":19,\"name\":\"tomato sauce\",\"description\":\"spicy tomato sauce is best\",\"quantity\":\"200 mL\",\"ord\":2}], \"userId\":10}\n");
 //controller.updateRecipe(obj);
-
+        //System.out.println(controller.searchRecipes("rice", "name"));
+        System.out.println( controller.suggestTerm("rice noo", "name"));
+        try {
+            controller.indexRecipes();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            System.out.println( controller.checkTerm("ricc nood", "name"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
