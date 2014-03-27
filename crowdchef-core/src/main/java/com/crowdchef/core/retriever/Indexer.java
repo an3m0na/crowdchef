@@ -31,7 +31,6 @@ public class Indexer {
             Directory dir = FSDirectory.open(new File("indexes"));
 
             Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_44);
-            AnalyzingSuggester suggester = new AnalyzingSuggester(analyzer);
 
             IndexWriterConfig iwc = new IndexWriterConfig(Version.LUCENE_44,
                     analyzer);
@@ -39,14 +38,13 @@ public class Indexer {
             iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
 
             IndexWriter writer = new IndexWriter(dir, iwc);
-            indexDocs(writer, mySelectAllRecipes, suggester);
+            indexDocs(writer, mySelectAllRecipes);
             writer.commit();
             writer.close();
     }
 
     private void indexDocs(final IndexWriter aWriter,
-                           final List<Recipe> aRecipes,
-                           AnalyzingSuggester suggester) throws IOException {
+                           final List<Recipe> aRecipes) throws IOException {
         for (Recipe myRecipe : aRecipes) {
             Document myDocument = new Document();
 

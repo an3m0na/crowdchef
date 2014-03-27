@@ -46,8 +46,8 @@ public interface CoreController {
 
     public JsonElement listUsers();
 
-    public JsonElement suggestQuery(String query, String field);
+    public JsonElement suggestTerm(String term, String field);
 
-    public JsonElement checkQuery(String query, String field);
+    public JsonElement checkTerm(String term, String field) throws IOException;
 
 }

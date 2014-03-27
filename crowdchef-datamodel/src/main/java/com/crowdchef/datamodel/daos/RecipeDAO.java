@@ -117,6 +117,8 @@ public class RecipeDAO {
             result = database.retrieve("AllRecipes", Recipe.class);
             return result;
         }
+        if(ids.size()<1)
+            return new ArrayList<Recipe>();
         result = database.retrieve("AllRecipesInIds", "ids", ids, Recipe.class);
         return result;
     }

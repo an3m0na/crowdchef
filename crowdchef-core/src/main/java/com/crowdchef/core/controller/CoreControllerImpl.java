@@ -5,7 +5,7 @@ import com.crowdchef.core.handlers.RecipeHandler;
 import com.crowdchef.core.handlers.UserHandler;
 import com.crowdchef.core.retriever.Indexer;
 import com.crowdchef.core.retriever.Searcher;
-import com.crowdchef.core.retriever.Suggester;
+import com.crowdchef.core.retriever.Speller;
 import com.crowdchef.datamodel.CrowdChefDatabase;
 import com.crowdchef.datamodel.ValidationErrorCode;
 import com.crowdchef.datamodel.ValidationException;
@@ -27,7 +27,7 @@ class CoreControllerImpl implements CoreController {
     private RecipeHandler recipeHandler;
     private final Searcher searcher;
     private final Indexer indexer;
-    private final Suggester suggester;
+    private final Speller speller;
 
     protected CoreControllerImpl() {
         this.database = new CrowdChefDatabase();
@@ -37,7 +37,7 @@ class CoreControllerImpl implements CoreController {
             this.indexer = new Indexer();
             indexRecipes();
             this.searcher = new Searcher();
-            this.suggester = new Suggester();
+            this.speller = new Speller();
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("Could not initialize Lucene");
@@ -191,8 +191,8 @@ class CoreControllerImpl implements CoreController {
         indexer.index(recipeHandler.getRecipes());
         if (searcher != null)
             searcher.initSearcher();
-        if (suggester != null)
-            suggester.initSuggester();
+        if (speller != null)
+            speller.initSpeller();
     }
 
     @Override
@@ -217,12 +217,12 @@ class CoreControllerImpl implements CoreController {
     }
 
     @Override
-    public JsonElement suggestQuery(String query, String field) {
-        return new GsonBuilder().create().toJsonTree(suggester.autoSuggest(query, field));
+    public JsonElement suggestTerm(String term, String field) {
+        return new GsonBuilder().create().toJsonTree(speller.autoSuggest(term, field));
     }
 
     @Override
-    public JsonElement checkQuery(String query, String field) {
-        return null;
+    public JsonElement checkTerm(String term, String field) throws IOException {
+        return new GsonBuilder().create().toJsonTree(speller.checkSpelling(term, field));
     }
 }
