@@ -370,5 +370,23 @@ public class WebService implements SparkApplication {
             }
         });
 
+        post(new Route("/complexSearch") {
+            @Override
+            public Object handle(final Request request, final Response response) {
+                JsonObject result = new JsonObject();
+                try {
+                    result.add("result", controller.searchRecipesComplex(new JsonParser().parse(request.body())));
+                    result.addProperty("successful", true);
+                } catch(ConstraintViolationException e){
+                    result.addProperty("result", "Constraint "+e.getConstraintName()+" violated");
+                    result.addProperty("successful", false);
+                }catch (Exception e) {
+                    result.addProperty("result", e.getMessage() == null? printStackTrace(e):e.getMessage());
+                    result.addProperty("successful", false);
+                }
+                return result;
+            }
+        });
+
     }
 }

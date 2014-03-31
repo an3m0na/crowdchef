@@ -14,12 +14,15 @@ import com.crowdchef.datamodel.entities.Recipe;
 import com.crowdchef.datamodel.entities.RecipeTasteScore;
 import com.crowdchef.datamodel.entities.User;
 import com.google.gson.*;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.search.BooleanClause;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 class CoreControllerImpl implements CoreController {
     private CrowdChefDatabase database;
@@ -181,9 +184,17 @@ class CoreControllerImpl implements CoreController {
 
     @Override
     public JsonElement searchRecipes(String searchQuery, String field) throws IOException, ParseException {
-        List<Long> recipeIds = searcher.search(searchQuery, field);
-        searcher.search(searchQuery, field);
-        return listRecipes(recipeIds);
+        Map<Long, String> map = searcher.search(searchQuery, field);
+
+        JsonArray result = new JsonArray();
+        JsonObject tmp;
+        for (Map.Entry<Long, String> entry : map.entrySet()) {
+            tmp = new JsonObject();
+            tmp.addProperty("id", entry.getKey());
+            tmp.addProperty("name", entry.getValue());
+            result.add(tmp);
+        }
+        return result;
     }
 
     @Override
@@ -224,5 +235,41 @@ class CoreControllerImpl implements CoreController {
     @Override
     public JsonElement checkTerm(String term, String field) throws IOException {
         return new GsonBuilder().create().toJsonTree(speller.checkSpelling(term, field));
+    }
+
+    @Override
+    public JsonElement searchRecipesComplex(JsonElement query) throws IOException, ParseException {
+        JsonArray list = query.getAsJsonArray();
+        List<BooleanClause> clauseList = new ArrayList<BooleanClause>();
+        for (JsonElement elem : list) {
+            JsonObject obj = elem.getAsJsonObject();
+            BooleanClause clause;
+            if (obj.get("min") != null && obj.get("max") != null) {
+                clause = searcher.getBooleanClause(Integer.parseInt(obj.get("min").getAsString()),
+                        Integer.parseInt(obj.get("max").getAsString()),
+                        obj.get("field").getAsString(),
+                        obj.get("occur").getAsString());
+
+            }
+            else{
+                clause = searcher.getBooleanClause(obj.get("query").getAsString(),
+                        obj.get("field").getAsString(),
+                        obj.get("occur").getAsString());
+            }
+            if(clause != null){
+                clauseList.add(clause);
+            }
+        }
+        Map<Long, String> map = searcher.complexSearch(clauseList);
+
+        JsonArray result = new JsonArray();
+        JsonObject tmp;
+        for (Map.Entry<Long, String> entry : map.entrySet()) {
+            tmp = new JsonObject();
+            tmp.addProperty("id", entry.getKey());
+            tmp.addProperty("name", entry.getValue());
+            result.add(tmp);
+        }
+        return result;
     }
 }

@@ -6,6 +6,7 @@ import org.apache.lucene.queryparser.classic.ParseException;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 public interface CoreController {
 
@@ -50,4 +51,5 @@ public interface CoreController {
 
     public JsonElement checkTerm(String term, String field) throws IOException;
 
+    public JsonElement searchRecipesComplex(JsonElement query) throws IOException, ParseException;
 }
