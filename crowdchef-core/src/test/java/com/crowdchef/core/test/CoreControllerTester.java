@@ -3,11 +3,14 @@ package com.crowdchef.core.test;
 
 import com.crowdchef.core.controller.CoreController;
 import com.crowdchef.core.controller.CoreControllerFactory;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import org.apache.lucene.queryparser.classic.ParseException;
 
 import java.io.IOException;
 
 public class CoreControllerTester {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException, ParseException {
         CoreController controller = CoreControllerFactory.getControllerInstance();
 //        System.out.println(controller.getUserInfo(new Long(21)));
 //        System.out.println(controller.getRecipe(new Long(6)));
@@ -23,20 +26,16 @@ public class CoreControllerTester {
 
 //        JsonParser parser = new JsonParser();
         //JsonObject obj = (JsonObject) parser.parse("{\"recipeId\":11, \"ingredients\":[{\"id\":20,\"name\":\"carrots\",\"quantity\":\"400 g\",\"ord\":1}]}");
- //controller.updateIngredients(obj);
+        //controller.updateIngredients(obj);
 //        JsonObject obj = (JsonObject) parser.parse("{\"id\":11,\"name\":\"Regular donner\",\"description\":\"Alleen vlees\",\"tags\":\"donner,kebap,vlees\",\"directions\":\"Just ask the Turkish guy\",\"createTime\":\"Mar 19, 2014 2:25:32 PM\",\"ingredients\":[{\"id\":20,\"name\":\"chicken breast\",\"quantity\":\"400 g\",\"ord\":1},{\"id\":19,\"name\":\"tomato sauce\",\"description\":\"spicy tomato sauce is best\",\"quantity\":\"200 mL\",\"ord\":2}], \"userId\":10}\n");
 //controller.updateRecipe(obj);
-        //System.out.println(controller.searchRecipes("rice", "name"));
-        System.out.println( controller.suggestTerm("rice noo", "name"));
-        try {
-            controller.indexRecipes();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
-            System.out.println( controller.checkTerm("ricc nood", "name"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//       System.out.println(controller.searchRecipes("cook AND for", "description"));
+//        System.out.println(controller.searchByTaste());
+//        System.out.println( controller.suggestTerm("ri", "name"));
+//            controller.indexRecipes();
+//            System.out.println( controller.checkTerm("ricc", "name"));
+        System.out.println(controller.searchRecipesComplex(new JsonParser().parse("[{\"field\":\"name\",\"query\":\"rice\",\"occur\":\"should\"},{\"field\":\"sweet\",\"min\":\"1\",\"max\":\"1\",\"occur\":\"should\"}]")));
+
+//
     }
 }

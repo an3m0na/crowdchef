@@ -30,6 +30,7 @@ public class Speller {
 
     public void initSpeller() throws IOException {
         DirectoryReader reader = DirectoryReader.open(FSDirectory.open(new File("indexes")));
+
         checker = new SpellChecker(FSDirectory.open(new File("spellchecker")));
         Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_44);
         IndexWriterConfig iwc = new IndexWriterConfig(Version.LUCENE_44,
@@ -40,6 +41,7 @@ public class Speller {
             AnalyzingSuggester suggester = new AnalyzingSuggester(
                     new StandardAnalyzer(Version.LUCENE_44));
             LuceneDictionary dictionary = new LuceneDictionary(reader, field);
+            checker.clearIndex();
             checker.indexDictionary(dictionary, iwc, true);
             suggester.build(dictionary);
             suggesters.put(field, suggester);

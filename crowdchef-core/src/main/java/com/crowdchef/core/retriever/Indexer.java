@@ -3,53 +3,51 @@ package com.crowdchef.core.retriever;
 import com.crowdchef.datamodel.CrowdChefDatabase;
 import com.crowdchef.datamodel.entities.Ingredient;
 import com.crowdchef.datamodel.entities.Recipe;
+import com.crowdchef.datamodel.entities.RecipeTasteScore;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.*;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.search.spell.Dictionary;
-import org.apache.lucene.search.spell.TermFreqIterator;
-import org.apache.lucene.search.suggest.analyzing.AnalyzingSuggester;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
-import org.apache.lucene.util.BytesRef;
-import org.apache.lucene.util.BytesRefIterator;
 import org.apache.lucene.util.Version;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Comparator;
 import java.util.List;
 
 public class Indexer {
 
+    private float ratingBoost = 1;
+
     public void index(List<Recipe> recipeList) throws IOException {
 
-            List<Recipe> mySelectAllRecipes = recipeList;
+        List<Recipe> mySelectAllRecipes = recipeList;
 
-            Directory dir = FSDirectory.open(new File("indexes"));
+        Directory dir = FSDirectory.open(new File("indexes"));
 
-            Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_44);
+        Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_44);
 
-            IndexWriterConfig iwc = new IndexWriterConfig(Version.LUCENE_44,
-                    analyzer);
+        IndexWriterConfig iwc = new IndexWriterConfig(Version.LUCENE_44,
+                analyzer);
 
-            iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
+        iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
 
-            IndexWriter writer = new IndexWriter(dir, iwc);
-            indexDocs(writer, mySelectAllRecipes);
-            writer.commit();
-            writer.close();
+        IndexWriter writer = new IndexWriter(dir, iwc);
+        writer.deleteAll();
+        indexDocs(writer, mySelectAllRecipes);
+        writer.commit();
+        writer.close();
     }
 
     private void indexDocs(final IndexWriter aWriter,
                            final List<Recipe> aRecipes) throws IOException {
         for (Recipe myRecipe : aRecipes) {
             Document myDocument = new Document();
-
-            myDocument.add(new StringField("id",
-                    "" + myRecipe.getId(),
+            myDocument.add(new LongField("id",
+                    myRecipe.getId(),
                     Field.Store.YES));
             myDocument.add(new TextField("name",
                     myRecipe.getName(),
@@ -63,7 +61,6 @@ public class Indexer {
             myDocument.add(new TextField("tag",
                     myRecipe.getTags(),
                     Field.Store.NO));
-            //myDocument.add(new NumericDocValuesField("rating", 1L));
             List<Ingredient> ingredients = myRecipe.getIngredients();
             if (ingredients != null) {
                 for (Ingredient i : ingredients) {
@@ -72,6 +69,29 @@ public class Indexer {
                             Field.Store.NO));
                 }
             }
+            myDocument.add(new FloatField("rating",
+                    myRecipe.getRating().getValue().floatValue()*ratingBoost,
+                    Field.Store.NO));
+            RecipeTasteScore taste = myRecipe.getTasteScore();
+            if (taste != null) {
+                myDocument.add(new IntField("sweet",
+                        taste.getSweet(),
+                        Field.Store.YES));
+                System.out.println("added sweet "+ taste.getSweet()+" "+myDocument.get("sweet"));
+                myDocument.add(new IntField("sour",
+                        taste.getSour(),
+                        Field.Store.NO));
+                myDocument.add(new IntField("salty",
+                        taste.getSalty(),
+                        Field.Store.NO));
+                myDocument.add(new IntField("spicy",
+                        taste.getSpicy(),
+                        Field.Store.NO));
+                myDocument.add(new IntField("savory",
+                        taste.getSavory(),
+                        Field.Store.NO));
+            }
+
 
             aWriter.addDocument(myDocument);
         }
