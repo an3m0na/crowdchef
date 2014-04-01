@@ -35,13 +35,13 @@ public class Speller {
         Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_44);
         IndexWriterConfig iwc = new IndexWriterConfig(Version.LUCENE_44,
                 analyzer);
-        String[] fields = new String[]{"name", "description", "directions", "tag"};
+        String[] fields = new String[]{"name", "description", "directions", "tag", "ingredient"};
         suggesters = new HashMap<String, AnalyzingSuggester>();
+        checker.clearIndex();
         for (String field : fields) {
             AnalyzingSuggester suggester = new AnalyzingSuggester(
                     new StandardAnalyzer(Version.LUCENE_44));
             LuceneDictionary dictionary = new LuceneDictionary(reader, field);
-            checker.clearIndex();
             checker.indexDictionary(dictionary, iwc, true);
             suggester.build(dictionary);
             suggesters.put(field, suggester);

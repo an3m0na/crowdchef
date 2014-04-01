@@ -31,10 +31,10 @@ public class CoreControllerTester {
 //controller.updateRecipe(obj);
 //       System.out.println(controller.searchRecipes("cook AND for", "description"));
 //        System.out.println(controller.searchByTaste());
-//        System.out.println( controller.suggestTerm("ri", "name"));
+        System.out.println( controller.checkTerm("past", "name"));
 //            controller.indexRecipes();
 //            System.out.println( controller.checkTerm("ricc", "name"));
-        System.out.println(controller.searchRecipesComplex(new JsonParser().parse("[{\"field\":\"name\",\"query\":\"rice\",\"occur\":\"should\"},{\"field\":\"sweet\",\"min\":\"1\",\"max\":\"1\",\"occur\":\"should\"}]")));
+        //System.out.println(controller.searchRecipesComplex(new JsonParser().parse("[{\"field\":\"sweet\",\"min\":\"1\",\"max\":\"1\",\"occur\":\"should\"}]")));
 
 //
     }
