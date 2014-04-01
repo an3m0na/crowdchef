@@ -76,8 +76,7 @@ public class Indexer {
             if (taste != null) {
                 myDocument.add(new IntField("sweet",
                         taste.getSweet(),
-                        Field.Store.YES));
-                System.out.println("added sweet "+ taste.getSweet()+" "+myDocument.get("sweet"));
+                        Field.Store.NO));
                 myDocument.add(new IntField("sour",
                         taste.getSour(),
                         Field.Store.NO));
